@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "window": {
+    "since": "2026-09-24T13:47:00Z",
+    "until": "2026-09-25T13:47:00Z"
+  },
+  "generated_at": "2026-09-25T13:47:00Z",
+  "repositories": [
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-24T13:47:00Z",
+      "until": "2026-09-25T13:47:00Z",
+      "collected": 22,
+      "new": 22
+    },
+    {
+      "repo": "gcc-mirror/gcc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-24T13:47:00Z",
+      "until": "2026-09-25T13:47:00Z",
+      "collected": 27,
+      "new": 27
+    },
+    {
+      "repo": "sailfishos-mirror/glibc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-24T13:47:00Z",
+      "until": "2026-09-25T13:47:00Z",
+      "collected": 0,
+      "new": 0
+    }
+  ],
+  "counts": {
+    "total": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "packaging_candidates": 0,
+    "llm": 0,
+    "rules_only": 0
+  },
+  "warnings": [
+    "RTEMS/sourceware-mirror-binutils-gdb：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "gcc-mirror/gcc：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "分页在第 1 页停止，元数据覆盖不完整。"
+  ],
+  "items": []
+}
