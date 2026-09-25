@@ -26,6 +26,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -58,5 +60,15 @@ jobs:
           git add -- reports state/last-success.json
           if ! git diff --cached --quiet; then
             git commit -m "chore: archive GNU upstream report"
-            git push origin "HEAD:$REPORT_BRANCH"
+            for attempt in 1 2 3; do
+              git fetch origin "$REPORT_BRANCH"
+              if ! git rebase "origin/$REPORT_BRANCH"; then
+                git rebase --abort
+                exit 1
+              fi
+              if git push origin "HEAD:$REPORT_BRANCH"; then
+                exit 0
+              fi
+            done
+            exit 1
           fi
