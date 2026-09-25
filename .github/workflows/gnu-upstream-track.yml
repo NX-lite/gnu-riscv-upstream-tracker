@@ -1,0 +1,62 @@
+name: GNU RISC-V upstream tracker
+
+on:
+  schedule:
+    - cron: '0 1 * * 1'
+  workflow_dispatch:
+    inputs:
+      lookback_days:
+        description: 首次运行回溯天数（已有状态时从上次成功时间继续）
+        type: number
+        default: 7
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gnu-upstream-tracker
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run offline tests
+        run: python -m unittest discover -s tests -v
+      - name: Collect updates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_URL: ${{ vars.LLM_API_URL }}
+          LLM_MODEL: ${{ vars.LLM_MODEL }}
+          LOOKBACK_DAYS: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.lookback_days) || '7' }}
+        run: python scripts/run_tracker.py --lookback-days "$LOOKBACK_DAYS"
+      - name: Save report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gnu-upstream-reports-${{ github.run_id }}
+          path: |
+            reports/
+            state/last-success.json
+          retention-days: 90
+      - name: Commit reports and state
+        if: github.ref_name == github.event.repository.default_branch
+        env:
+          REPORT_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- reports state/last-success.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: archive GNU upstream report"
+            git push origin "HEAD:$REPORT_BRANCH"
+          fi

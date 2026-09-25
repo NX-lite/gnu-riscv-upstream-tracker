@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "repository": "gcc-mirror/gcc",
+      "kind": "commit",
+      "status": "merged",
+      "sha": "1111111111111111111111111111111111111111",
+      "title": "RISC-V: Add SpacemiT K3 CPU support (fixture)",
+      "body": "Synthetic metadata for an offline test. This is not an upstream commit.",
+      "author": "Fixture",
+      "timestamp": "2026-09-18T08:00:00Z",
+      "url": "https://github.com/gcc-mirror/gcc/commit/1111111111111111111111111111111111111111",
+      "files": ["gcc/config/riscv/riscv.cc"],
+      "pull_request": null
+    },
+    {
+      "repository": "sailfishos-mirror/glibc",
+      "kind": "commit",
+      "status": "merged",
+      "sha": "2222222222222222222222222222222222222222",
+      "title": "RISC-V: Fix incorrect memory access (fixture)",
+      "body": "Synthetic regression fix for tests.",
+      "author": "Fixture",
+      "timestamp": "2026-09-17T08:00:00Z",
+      "url": "https://github.com/sailfishos-mirror/glibc/commit/2222222222222222222222222222222222222222",
+      "files": ["sysdeps/riscv/memcpy.S"],
+      "pull_request": null
+    },
+    {
+      "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+      "kind": "commit",
+      "status": "merged",
+      "sha": "3333333333333333333333333333333333333333",
+      "title": "RISC-V: Fix typo in comment (fixture)",
+      "body": "Synthetic comment-only cleanup.",
+      "author": "Fixture",
+      "timestamp": "2026-09-16T08:00:00Z",
+      "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/3333333333333333333333333333333333333333",
+      "files": ["gas/config/tc-riscv.c"],
+      "pull_request": null
+    },
+    {
+      "repository": "gcc-mirror/gcc",
+      "kind": "commit",
+      "status": "merged",
+      "sha": "4444444444444444444444444444444444444444",
+      "title": "x86: Add vector instruction support (fixture)",
+      "body": "Synthetic unrelated change.",
+      "author": "Fixture",
+      "timestamp": "2026-09-15T08:00:00Z",
+      "url": "https://github.com/gcc-mirror/gcc/commit/4444444444444444444444444444444444444444",
+      "files": ["gcc/config/i386/i386.cc"],
+      "pull_request": null
+    }
+  ]
+}

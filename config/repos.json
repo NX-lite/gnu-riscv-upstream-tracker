@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "default_lookback_days": 7,
+  "repositories": [
+    {
+      "repo": "gcc-mirror/gcc",
+      "branch": "master"
+    },
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master"
+    },
+    {
+      "repo": "sailfishos-mirror/glibc",
+      "branch": "master"
+    }
+  ],
+  "rules": {
+    "riscv_path_fragments": [
+      "riscv",
+      "risc-v",
+      "config/riscv",
+      "sysdeps/riscv"
+    ],
+    "riscv_tokens": [
+      "riscv",
+      "risc-v",
+      "rv32",
+      "rv64"
+    ],
+    "category_keywords": {
+      "hardware": [
+        "soc",
+        "board",
+        "k3",
+        "spacemit",
+        "cpu",
+        "hart",
+        "microarchitecture",
+        "processor",
+        "tune",
+        "tuning"
+      ],
+      "isa-extension": [
+        "extension",
+        "zabha",
+        "zacas",
+        "zba",
+        "zbb",
+        "zdinx",
+        "zfa",
+        "zfh",
+        "zfinx",
+        "zicfilp",
+        "zicfiss",
+        "zicond",
+        "zihint"
+      ],
+      "profile-abi": [
+        "abi",
+        "ilp32",
+        "lp64",
+        "profile",
+        "psabi"
+      ],
+      "compiler-option": [
+        "-march",
+        "-mabi",
+        "-mcpu",
+        "option",
+        "options"
+      ],
+      "vector-crypto-hypervisor": [
+        "crypto",
+        "hypervisor",
+        "vector",
+        "vectorization",
+        "vlen"
+      ],
+      "bugfix": [
+        "bug",
+        "fix",
+        "fixes",
+        "correct",
+        "correctness",
+        "regression",
+        "wrong-code"
+      ]
+    },
+    "low_value_keywords": [
+      "cleanup",
+      "clean up",
+      "comment",
+      "comments",
+      "test",
+      "tests",
+      "testsuite",
+      "formatting",
+      "reformat",
+      "spelling",
+      "typo",
+      "whitespace"
+    ],
+    "functional_keywords": [
+      "add",
+      "adds",
+      "added",
+      "support",
+      "supports",
+      "enable",
+      "enabled",
+      "implement",
+      "introduce",
+      "extend",
+      "improve",
+      "optimize"
+    ],
+    "packaging_candidate_categories": [
+      "hardware",
+      "bugfix",
+      "compiler-option",
+      "isa-extension",
+      "profile-abi",
+      "vector-crypto-hypervisor"
+    ]
+  }
+}

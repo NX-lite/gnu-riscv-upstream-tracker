@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "window": {
+    "since": "2026-09-24T08:24:23Z",
+    "until": "2026-09-25T08:24:23Z"
+  },
+  "generated_at": "2026-09-25T08:24:23Z",
+  "repositories": [
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-24T08:24:23Z",
+      "until": "2026-09-25T08:24:23Z",
+      "collected": 23,
+      "new": 23
+    }
+  ],
+  "counts": {
+    "total": 2,
+    "high": 0,
+    "medium": 2,
+    "low": 0,
+    "packaging_candidates": 0,
+    "llm": 2,
+    "rules_only": 0
+  },
+  "warnings": [
+    "RTEMS/sourceware-mirror-binutils-gdb：Release 元数据不完整：GitHub 接口请求失败（HTTP 403）",
+    "RTEMS/sourceware-mirror-binutils-gdb：标签元数据不完整：GitHub 接口请求失败（HTTP 403）",
+    "RTEMS/sourceware-mirror-binutils-gdb：轻量标签没有独立时间，只能用所指提交的时间代替。"
+  ],
+  "items": [
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "86f36538c5bba33aeec762b4907f37553c1a3173",
+        "title": "RISC-V: Describe relax passes with a pass table",
+        "body": "_bfd_riscv_relax_section picks the relax function for each reloc with a\nchain of branches on info->relax_pass, and ld hard-codes the number of\npasses.  Adding a pass means adding another branch and bumping the\ncount in the emulation.\n\nThis is a refactor to make room for more relax passes, such as\nvendor specific ones or one for Zcmt table jump.  Each such pass would\notherwise add its own branch, its own gating check run for every\nsection, and its own special case for cleanup.\n\nDescribe each pass with a riscv_relax_pass: a reloc selector, an\noptional per-section finish hook, an optional end-of-pass hook, and\nwhether it runs when target specific optimizations are disabled.\nbfd_elfNN_riscv_init_relax_passes builds the pass list for a link, and\nld stores the count in link_info.relax_pass.  The passes are the same\nas before, so there is no change in output.\n\nbfd/ChangeLog:\n\n\t* elfnn-riscv.c (RISCV_MAX_RELAX_PASSES): New.\n\t(struct riscv_elf_link_hash_table): Add relax_passes,\n\tnum_relax_passes and cur_relax_pass.\n\t(riscv_elf_link_hash_table_free): Finish the last relax pass.\n\t(riscv_elf_link_hash_table_create): Init cur_relax_pass.\n\t(riscv_relax_pass): New.\n\t(riscv_relax_skip_paired_relax, riscv_relax_select_shorten)\n\t(riscv_relax_select_align, riscv_add_relax_pass)\n\t(riscv_finish_relax_pass, bfd_elfNN_riscv_init_relax_passes): New.\n\t(_bfd_riscv_relax_section): Use the pass table.\n\t* elfxx-riscv.h (bfd_elf32_riscv_init_relax_passes)\n\t(bfd_elf64_riscv_init_relax_passes): Declare.\n\nld/ChangeLog:\n\n\t* emultempl/riscvelf.em (riscv_elf_before_allocation): Get\n\tthe number of relax passes from BFD.",
+        "author": "kito-cheng",
+        "timestamp": "2026-09-24T12:52:21Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/86f36538c5bba33aeec762b4907f37553c1a3173",
+        "files": [
+          "bfd/elfnn-riscv.c",
+          "bfd/elfxx-riscv.h",
+          "ld/emultempl/riscvelf.em"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "path:bfd/elfxx-riscv.h",
+          "path:ld/emultempl/riscvelf.em",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "llm",
+      "summary_zh": "上游 binutils-gdb 已合入提交：将 RISC-V 的 relax pass 选择逻辑从分支链重构为 riscv_relax_pass 表驱动形式，并把 pass 数量存入 link_info.relax_pass；提交说明称现有 pass 与原先相同，链接输出无变化。",
+      "impact_zh": "主要影响上游 RISC-V 链接器的代码结构和可维护性，为后续 vendor-specific 或 Zcmt table jump 等新 relax pass 提供扩展点；据提交描述当前不改变链接输出。局限：仅依据上游元数据判断，不能确认该变更已经构建、测试或已进入 RuyiSDK 工具链，实际影响需在目标版本中人工核对。",
+      "packaging_advice_zh": "建议打包 binutils/gdb 时先人工确认目标源码版本是否合入该提交及后续修复；由于是重构且上游声明无输出变化，可侧重回归 RISC-V 链接结果和 relax 相关用例，确认没有意外差异；若 RuyiSDK 使用固定版本，应评估是否需要回溯或等待正式发布，不能直接视为已测试通过。",
+      "analysis_warning": null,
+      "llm_assessment": {
+        "importance": "medium",
+        "category": "other"
+      }
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b73d23cccf5568321cabaad3a8ec5cddafdef4ec",
+        "title": "RISC-V: Enable shared library and PIE support for riscv*-elf",
+        "body": "riscv*-elf is the only RISC-V target for which ld refuses -shared and\n-pie.  elf32lriscv-defs.sh has withheld GENERATE_SHLIB_SCRIPT and\nGENERATE_PIE_SCRIPT from it since be1dce26256a (\"RISC-V: Disable shared\nlibrary support for embedded elf.\"), whose commit message is a ChangeLog\nentry and records no reason.  Nothing in the RISC-V backend depends on\nthe exclusion, and riscv*-elf does not even set EMBEDDED.\n\nOther bare-metal ELF targets do generate the scripts.  aarch64*-elf was\ngiven PIE support deliberately, in 3af09e8db308 (\"Support -pie for\naarch64*-elf targets.\"), and arm-elf and x86_64-elf have both.  The\ngeneral question was raised in f2aaebdb9797 (\"GENERATE_SHLIB_SCRIPT vs.\nEMBEDDED.\") and settled the other way: that patch was reverted in\n8a46e447a88d, the author concluding that the ELF and program headers are\nstill written to the file, so an embedded ELF target producing an ET_DYN\nimage is not the mistake he had taken it for.\n\nld/\n\t* emulparams/elf32lriscv-defs.sh (GENERATE_SHLIB_SCRIPT): Set\n\tunconditionally rather than only for non-riscv*-elf targets.\n\t(GENERATE_PIE_SCRIPT): Likewise.\n\nAssisted-by: Claude:claude-opus-5\nSigned-off-by: Mintsuki <mintsuki@protonmail.com>",
+        "author": "Mintsuki",
+        "timestamp": "2026-09-24T10:20:57Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/b73d23cccf5568321cabaad3a8ec5cddafdef4ec",
+        "files": [
+          "ld/emulparams/elf32lriscv-defs.sh"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:ld/emulparams/elf32lriscv-defs.sh",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "llm",
+      "summary_zh": "上游 binutils-gdb 已合入提交：修改 ld/emulparams/elf32lriscv-defs.sh，使 riscv*-elf 目标也生成共享库脚本和 PIE 脚本，从而允许 ld 接受 -shared 与 -pie；此前该目标被排除在外，本次变更与 aarch64*-elf、arm-elf 等裸机 ELF 目标的做法对齐。",
+      "impact_zh": "对 riscv*-elf 裸机/嵌入式工具链而言，链接器能力发生变化，可生成 ET_DYN 的共享对象或 PIE 镜像，可能属于功能增强，也可能影响原有嵌入式链接行为。局限：仅依据上游提交，不能确认在 RuyiSDK 工具链中已合入、构建或测试通过，需人工验证实际支持情况。",
+      "packaging_advice_zh": "需人工核实所用 binutils 版本或分支是否包含该提交，并检查 RuyiSDK 对 riscv*-elf 工具链的定位；建议回归 -shared、-pie 及常规静态链接场景，确认链接脚本生成和 ELF 头符合预期；若面向嵌入式场景，应评估 ET_DYN 镜像是否会被误用或与引导/烧写流程冲突，不能仅凭上游提交即认为已受支持。",
+      "analysis_warning": null,
+      "llm_assessment": {
+        "importance": "medium",
+        "category": "other"
+      }
+    }
+  ]
+}
