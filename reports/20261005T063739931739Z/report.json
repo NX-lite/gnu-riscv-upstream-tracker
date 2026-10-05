@@ -1,0 +1,970 @@
+{
+  "schema_version": 1,
+  "window": {
+    "since": "2026-09-27T06:25:13Z",
+    "until": "2026-10-05T06:37:39Z"
+  },
+  "generated_at": "2026-10-05T06:37:39Z",
+  "repositories": [
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-27T06:25:13Z",
+      "until": "2026-10-05T06:37:39Z",
+      "collected": 103,
+      "new": 98
+    },
+    {
+      "repo": "gcc-mirror/gcc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-27T06:25:13Z",
+      "until": "2026-10-05T06:37:39Z",
+      "collected": 197,
+      "new": 172
+    },
+    {
+      "repo": "sailfishos-mirror/glibc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-09-27T06:25:13Z",
+      "until": "2026-10-05T06:37:39Z",
+      "collected": 15,
+      "new": 15
+    }
+  ],
+  "counts": {
+    "total": 18,
+    "high": 6,
+    "medium": 7,
+    "low": 5,
+    "packaging_candidates": 10,
+    "llm": 0,
+    "rules_only": 18
+  },
+  "warnings": [
+    "RTEMS/sourceware-mirror-binutils-gdb：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "gcc-mirror/gcc：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "分页在第 1 页停止，元数据覆盖不完整。",
+    "未配置 LLM_API_KEY，使用规则结果。"
+  ],
+  "items": [
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "7310b8560eae5292a1e2a5ff8c8b969506e1cece",
+        "title": "RISC-V: Decode Zcmt JVT entries in objdump",
+        "body": "Decode JVT entries and annotate table-jump targets. Add manually populated\nRV32 and RV64 tables, with and without a base symbol. The tests use plain\n--no-relax links solely to resolve addresses and do not depend on Zcmt\nlinker optimization. Preserve upstream Zdinx and Zqinx register checks.\n\nopcodes/ChangeLog:\n\n\t* riscv-dis.c (struct riscv_private_data): Add JVT fields.\n\t(riscv_set_xlen_from_elf): New function.\n\t(maybe_print_jvt_address): Ditto.\n\t(print_insn_args): Annotate JVT target.\n\t(riscv_disassemble_insn): Handle Zcmt decode.\n\t(riscv_disassemble_jvt): New function.\n\t(riscv_init_disasm_info): Init JVT data.\n\t(print_insn_riscv): Handle JVT section.\n\t(disassemble_free_riscv): Free JVT content.",
+        "author": "pz9115",
+        "timestamp": "2026-10-01T09:35:04Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/7310b8560eae5292a1e2a5ff8c8b969506e1cece",
+        "files": [
+          "binutils/testsuite/binutils-all/riscv/zcmt-jvt-base-rv32.d",
+          "binutils/testsuite/binutils-all/riscv/zcmt-jvt-base-rv64.d",
+          "binutils/testsuite/binutils-all/riscv/zcmt-jvt-rv32.d",
+          "binutils/testsuite/binutils-all/riscv/zcmt-jvt-rv64.d",
+          "binutils/testsuite/binutils-all/riscv/zcmt-jvt.ld",
+          "binutils/testsuite/binutils-all/riscv/zcmt-jvt.s",
+          "opcodes/riscv-dis.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "isa-extension",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:isa-extension:zdinx",
+          "path:binutils/testsuite/binutils-all/riscv/zcmt-jvt-base-rv32.d",
+          "path:binutils/testsuite/binutils-all/riscv/zcmt-jvt-base-rv64.d",
+          "path:binutils/testsuite/binutils-all/riscv/zcmt-jvt-rv32.d",
+          "path:binutils/testsuite/binutils-all/riscv/zcmt-jvt-rv64.d",
+          "path:binutils/testsuite/binutils-all/riscv/zcmt-jvt.ld",
+          "path:binutils/testsuite/binutils-all/riscv/zcmt-jvt.s",
+          "path:opcodes/riscv-dis.c",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V ISA 扩展相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "6963071aac9ac1433ca3dc7558c300b9d43c1ef1",
+        "title": "RISC-V: Add supervisor architecture support",
+        "body": "- The RISC-V profile has defined the following\n  - Ss1p11, Supervisor Architecture v1.11\n  - Ss1p12, Supervisor Architecture v1.12\n  - Ss1p13, Supervisor Architecture v1.13\n- Ref: https://github.com/riscv/riscv-profiles/blob/5879c13c924ec5636995c5883f40337e83f6049a/src/rvm23-profile.adoc#L265\n\nSigned-off-by: Jerry Zhang Jian <jerry.zhangjian@sifive.com>",
+        "author": "jerryzj",
+        "timestamp": "2026-10-01T09:02:58Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/6963071aac9ac1433ca3dc7558c300b9d43c1ef1",
+        "files": [
+          "bfd/elfxx-riscv.c",
+          "gas/testsuite/gas/riscv/march-help.l"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "profile-abi",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:support",
+          "keyword:profile-abi:profile",
+          "path:bfd/elfxx-riscv.c",
+          "path:gas/testsuite/gas/riscv/march-help.l",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V Profile 或 ABI相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "a3f5541bcf62d1142cea7f7f70afcabf888d947c",
+        "title": "RISC-V: Allow RVV register overlap for vfw{add,sub,mul}.vf",
+        "body": "Like vfw{add,sub,mul}.vv, allow the rvv register overlap for the\ndual widen float vf insns, aka vfwadd.vf, vfwsub.vf and vfwmul.vf.\n\ngcc/ChangeLog:\n\n\t* config/riscv/vector.md: Leverage Wvr constraint.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-09-29T01:45:31Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/a3f5541bcf62d1142cea7f7f70afcabf888d947c",
+        "files": [
+          "gcc/config/riscv/vector.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/vector.md",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "2b980c3e11a6b6ef0223d1668672bac877038185",
+        "title": "RISC-V: Error out early for unsupported builtins. [PR127553]",
+        "body": "Right now we only show an error if the expansion of a builtin fails.\nBut there is builtin code that get optimized away before expansion and\nnever shows an error message.  It's not strictly wrong code but at least\nsurprising and will mislead compilation checks.\n\nThis patch just copies the checks of expand_builtin to\ncheck_builtin_call.  We don't have the exact same expression of the\naffected call available at that point, though.  The basic fndecl just\ncontains the function name and not its arguments.  We can reconstruct\nthe call but in my tests there were always slight difference to the\nexpand-time diagnostic.  Therefore I adjusted the test expectations\ninstead.\n\n\tPR target/127553\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-vector-builtins.cc (validate_instance_type_required_extensions):\n\tAdd location param for logging.\n\t(expand_builtin): Pass location.\n\t(check_builtin_call): Likewise.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/base/bug-9.c: Adjust test expectation.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-1.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-10.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-2.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-3.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-4.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-5.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-6.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-7.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-8.c: Ditto.\n\t* gcc.target/riscv/rvv/base/intrinsic_required_ext-9.c: Ditto.\n\t* gcc.target/riscv/rvv/base/pr114988-1.c: Ditto.\n\t* gcc.target/riscv/rvv/base/pr114988-2.c: Ditto.\n\t* gcc.target/riscv/rvv/base/pr120436.c: Ditto.\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-17.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-18.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-19.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-20.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-21.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-22.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-23.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-24.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-25.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-26.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-27.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-28.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-29.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-3.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-7.c:\n\t* gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-8.c:\n\t* gcc.target/riscv/pr127553.c: New test.",
+        "author": "Robin Dapp",
+        "timestamp": "2026-09-28T18:55:41Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/2b980c3e11a6b6ef0223d1668672bac877038185",
+        "files": [
+          "gcc/config/riscv/riscv-vector-builtins.cc",
+          "gcc/testsuite/gcc.target/riscv/pr127553.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/bug-9.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-10.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-3.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-5.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-6.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-7.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-8.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-9.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr114988-1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr114988-2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr120436.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-17.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-18.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-19.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-20.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-21.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-22.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-23.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-24.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-25.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-26.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-27.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-28.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-29.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-3.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-7.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-8.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/riscv-vector-builtins.cc",
+          "path:gcc/testsuite/gcc.target/riscv/pr127553.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/bug-9.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-10.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-3.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-5.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-6.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-7.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-8.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/intrinsic_required_ext-9.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr114988-1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr114988-2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr120436.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-17.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-18.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-19.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-20.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-21.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-22.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-23.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-24.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-25.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-26.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-27.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-28.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-29.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-3.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-7.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/target_attribute_v_with_intrinsic-8.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "a924d879f01d00d6c29e870c51bebcbf5e5a96eb",
+        "title": "RISC-V: Consider spills in conv-dynamic LMUL [PR127075].",
+        "body": "This patch makes -mrvv-max-lmul=conv-dynamic spill aware.\nAs reported by Anton, Peter in PR127075, we don't consider spilling when\nletting the LMUL decision just be dependent on the size ratio of largest\nand smallest type.  This causes spills when building x264 with the\nconv-dynamic mode.\n\nAlthough the original idea was to have a more deterministic approach\nthan pure \"dynamic\", determinism alone is not too helpful when spills\nare still possible.\n\nThus, this patch merges the spill estimate of \"dynamic\" into\n\"conv-dynamic\" and also corrects some slight mistakes in \"dynamic\".\nI factored out the lmul-comparison logic into its own function so\nbetter_main_loop_than_p is a bit easier to follow.  While at it, I\nrenamed some functions and computed the type size ratio in add_stmt_cost\nwhich is much more straightforward than before.\n\n\tPR target/127075\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-vector-costs.cc (compute_estimated_lmul):\n\tRename...\n\t(estimate_lmul): ...To this.\n\t(compute_lmul_from_conversion_ratio): Remove.\n\t(costs::compute_live_ranges_and_lmul): Remove param.\n\t(costs::compute_conversion_dynamic_lmul): Remove.\n\t(costs::has_unexpected_spills_p): Rename...\n\t(costs::has_spills_p): ...To This.\n\t(costs::record_lmul_spills): Adjust comment.\n\t(costs::record_potential_unexpected_spills): Rename...\n\t(costs::record_potential_spills): ...To this.\n\t(costs::compare_lmul_to): New function.\n\t(costs::better_main_loop_than_p): Call new function.\n\t(costs::record_type_sizes): New function.\n\t(costs::add_stmt_cost): Call new function.\n\t(costs::finish_cost): Compute type ratio for LMUL.\n\t* config/riscv/riscv-vector-costs.h: Declare new function.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.dg/vect/costmodel/riscv/rvv/pr127075.c: New test.",
+        "author": "Robin Dapp",
+        "timestamp": "2026-09-28T18:55:41Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/a924d879f01d00d6c29e870c51bebcbf5e5a96eb",
+        "files": [
+          "gcc/config/riscv/riscv-vector-costs.cc",
+          "gcc/config/riscv/riscv-vector-costs.h",
+          "gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/pr127075.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/riscv-vector-costs.cc",
+          "path:gcc/config/riscv/riscv-vector-costs.h",
+          "path:gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/pr127075.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "sailfishos-mirror/glibc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "371d58d11bf7aacd4bf471bcb22bc7278330f349",
+        "title": "posix: Add POSIX posix_spawn_file_actions_add{,f}chdir",
+        "body": "Use proper symbols instead of alias to the *_np counterpart.\n\nThe declarations are also moved from __USE_XOPEN2K24XSI to\n__USE_XOPEN2K24.  POSIX.1-2024 defines both functions as part of the\nspawn option without XSI shading, so they must be visible under\n_POSIX_C_SOURCE=202405L (and with the default feature set) as well.\n\nChecked on x86_64-linux-gnu.",
+        "author": "zatrazz",
+        "timestamp": "2026-09-28T15:57:36Z",
+        "url": "https://github.com/sailfishos-mirror/glibc/commit/371d58d11bf7aacd4bf471bcb22bc7278330f349",
+        "files": [
+          "NEWS",
+          "conform/data/spawn.h-data",
+          "posix/Makefile",
+          "posix/Versions",
+          "posix/spawn.h",
+          "posix/spawn_faction_addchdir.c",
+          "posix/spawn_faction_addfchdir.c",
+          "posix/tst-spawn-chdir-posix.c",
+          "posix/tst-spawn-chdir.c",
+          "sysdeps/mach/hurd/i386/libc.abilist",
+          "sysdeps/mach/hurd/x86_64/libc.abilist",
+          "sysdeps/unix/sysv/linux/aarch64/libc.abilist",
+          "sysdeps/unix/sysv/linux/alpha/libc.abilist",
+          "sysdeps/unix/sysv/linux/arc/libc.abilist",
+          "sysdeps/unix/sysv/linux/arm/be/libc.abilist",
+          "sysdeps/unix/sysv/linux/arm/le/libc.abilist",
+          "sysdeps/unix/sysv/linux/csky/libc.abilist",
+          "sysdeps/unix/sysv/linux/hppa/libc.abilist",
+          "sysdeps/unix/sysv/linux/i386/libc.abilist",
+          "sysdeps/unix/sysv/linux/loongarch/ilp32/libc.abilist",
+          "sysdeps/unix/sysv/linux/loongarch/lp64/libc.abilist",
+          "sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist",
+          "sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist",
+          "sysdeps/unix/sysv/linux/microblaze/be/libc.abilist",
+          "sysdeps/unix/sysv/linux/microblaze/le/libc.abilist",
+          "sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist",
+          "sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist",
+          "sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist",
+          "sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist",
+          "sysdeps/unix/sysv/linux/or1k/libc.abilist",
+          "sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist",
+          "sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist",
+          "sysdeps/unix/sysv/linux/powerpc/powerpc64/be/libc.abilist",
+          "sysdeps/unix/sysv/linux/powerpc/powerpc64/le/libc.abilist",
+          "sysdeps/unix/sysv/linux/riscv/rv32/libc.abilist",
+          "sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist",
+          "sysdeps/unix/sysv/linux/s390/libc.abilist",
+          "sysdeps/unix/sysv/linux/sh/be/libc.abilist",
+          "sysdeps/unix/sysv/linux/sh/le/libc.abilist",
+          "sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist",
+          "sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist",
+          "sysdeps/unix/sysv/linux/x86_64/64/libc.abilist",
+          "sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "compiler-option",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:compiler-option:option",
+          "path:sysdeps/unix/sysv/linux/riscv/rv32/libc.abilist",
+          "path:sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 编译选项相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "d7bd302654fab2ddd8d7e8539f163db63a2f07e5",
+        "title": "vect: Fix scalar iteration bounds when doing alignment peeling with partial vectors [PR127677]",
+        "body": "static unsigned int list[32] __attribute__((aligned(64)));\n\n__attribute__((noinline, noipa))\nstatic int\ncontains (const unsigned int *p, unsigned int count, unsigned int start,\n          unsigned int key)\n{\n  for (unsigned int i = start; i < count; ++i)\n    if (p[i] == key)\n      return 1;\n  return 0;\n}\n\nint\nmain (void)\n{\n  return contains (list, 2, 1, 1);\n}\n\nwhen compiled on RISC-V with\n\n-O3 -march=rv64gcv_zvl256b -mabi=lp64d -mrvv-vector-bits=zvl -mrvv-max-lmul=m2 -g0\n\nshows\n\n  bnd.9_47 = niters.5_27 - prolog_loop_niters.7_31;\n  _63 = (unsigned long) bnd.9_47;\n\n...\n\nand so if niters is lower than prolog iters we get an underflow.\ni.e.\n\n  niters        = count - start = 2 - 1 = 1\n  prolog_niters = 7\n\nso when it calculates the remainder\n\n  remaining = niters - prolog_niters;\n\nthis underflows:\n\n   1 - 7 = 4294967290\n\nNormally we don't get here for AArch64 and x86_64 because of the different\npaths they take in vectorization.\n\nFor SVE we perform the loop fully masked, including trailing elements.\nfor Adv. SIMD and x86_64 we insert a peeling check.\n\n  _46 = niters - 1 = 0;\n  _48 = MAX(peel + 3, 5);   // at least 5\n\n  if (0 < _48)\n      goto bb26;\n\nwhich skips the alignment peeling prologue.  Prior to\n8af2e8e49d6e5d33c01c2beaead4933bc286974c we would have generated an epilog\nfor the early break and alignment peeling.\n\nThe change removed the requirement for an epilog for early break loops which\ndon't have side-effects, but still required alignment peeling.\n\nThis exposed that the checks in vect_do_peeling generate the epilog and so\nthe iteration check only when\n\n  poly_uint64 bound_epilog = 0;\n  if (!LOOP_VINFO_USING_PARTIAL_VECTORS_P (loop_vinfo)\n      && LOOP_VINFO_PEELING_FOR_NITER (loop_vinfo))\n    bound_epilog += vf - 1;\n  if (LOOP_VINFO_PEELING_FOR_GAPS (loop_vinfo))\n    bound_epilog += 1;\n\nso if LOOP_VINFO_USING_PARTUAL_VECTORS_P then no epilog or check is generated.\nThis means that vect_gen_prolog_loop_niters needs to in itself handle this\nassumption.\n\nThis is easy to do by generating a MIN (niters, prolog_niters) check.\nIf the guard is generated this will be optimized out, but if not,\nit makes the prolog peeling loop handle the \"scalar\" iterations itself without\nneeding a second scalar loop.\n\ngcc/ChangeLog:\n\n\tPR tree-optimization/127677\n\t* tree-vect-loop-manip.cc (vect_gen_prolog_loop_niters): Generate MIN\n\texpression on niters.\n\ngcc/testsuite/ChangeLog:\n\n\tPR tree-optimization/127677\n\t* gcc.dg/vect/vect-early-break_146-pr127677.c: New test.",
+        "author": "TamarChristinaArm",
+        "timestamp": "2026-10-02T12:20:24Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/d7bd302654fab2ddd8d7e8539f163db63a2f07e5",
+        "files": [
+          "gcc/testsuite/gcc.dg/vect/vect-early-break_146-pr127677.c",
+          "gcc/tree-vect-loop-manip.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:compiler-option:-mabi",
+          "keyword:compiler-option:-march",
+          "keyword:isa-extension:zvl",
+          "keyword:vector-crypto-hypervisor:vector",
+          "keyword:vector-crypto-hypervisor:vectorization",
+          "token:risc-v",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "e522ebecf7381e1e03548a7d0816b8ce3c038984",
+        "title": "RISC-V: Fix h->got union phase confusion for DT_RELR",
+        "body": "record_relr_dyn_got_relocs is called after allocate_dynrelocs has\nrepurposed h->got from refcount to offset semantics.  This goes\nalong with a change in indication for no GOT entry allocated from\nh->got.refcount <= 0 to h->got.offset == (bfd_vma)-1.\n\nbfd/\n\t* elfnn-riscv.c (record_relr_dyn_got_relocs): Fix h->got\n\tunion phase confusion.\n\nSigned-off-by: Jens Remus <jremus@linux.ibm.com>",
+        "author": "Jens Remus",
+        "timestamp": "2026-10-02T09:49:33Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/e522ebecf7381e1e03548a7d0816b8ce3c038984",
+        "files": [
+          "bfd/elfnn-riscv.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "path:bfd/elfnn-riscv.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "4b013df1822f977e2d9ceeeabc0eb2f827f66c03",
+        "title": "RISC-V: Add Zcmt table-jump relocation definitions",
+        "body": "Add the linker-internal table-jump marker and instruction encoding\ndefinitions. The marker has no public ELF relocation or howto entry.\n\nbfd/ChangeLog:\n\n        * elfxx-riscv.c: Add TABLE_JUMP howto.\n        * elfxx-riscv.h (struct riscv_elf_params): Add relax_zcmt field.\n\ninclude/ChangeLog:\n\n        * elf/riscv.h (R_RISCV_TABLE_JUMP): New reloc number.\n        (RISCV_TABLE_JUMP_BASE_SYMBOL): New symbol name.\n        (TABLE_JUMP_SEC_NAME): New section name.\n        * opcode/riscv.h (ZCMT_TOTAL_ENTRIES): New Zcmt constants.\n        (ZCMT_JT_BEGIN): Ditto.\n        (ZCMT_JT_END): Ditto.\n        (ZCMT_JT_NUM_ENTRIES): Ditto.\n        (ZCMT_JALT_BEGIN): Ditto.\n        (ZCMT_JALT_END): Ditto.\n        (ZCMT_JALT_NUM_ENTRIES): Ditto.",
+        "author": "pz9115",
+        "timestamp": "2026-10-01T09:35:04Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/4b013df1822f977e2d9ceeeabc0eb2f827f66c03",
+        "files": [
+          "include/elf/riscv.h",
+          "include/opcode/riscv.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:include/elf/riscv.h",
+          "path:include/opcode/riscv.h",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "97e4144904779d0c986670ed977d7c3fa61806b2",
+        "title": "RISC-V: PR30237, don't add PT_RISCV_ATTRIBUTES in objcopy/strip",
+        "body": "LLD < 17 doesn't create PT_RISCV_ATTRIBUTES.  Adding a program header\nto an existing binary breaks layout when space wasn't reserved,\nfailing with \"not enough room for program headers\".\n\nSkip when info == NULL, like SPU, S390, and HPPA.\n\nbfd/\n\tPR 30237\n\telfnn-riscv.c (riscv_elf_additional_program_headers): Return 0\n\then info == NULL.\n\t(riscv_elf_modify_segment_map): Likewise, return true.\n\nSigned-off-by: Sungjoon Moon <sumoon@seoulsaram.org>",
+        "author": "OctopusET",
+        "timestamp": "2026-10-01T08:49:22Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/97e4144904779d0c986670ed977d7c3fa61806b2",
+        "files": [
+          "bfd/elfnn-riscv.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b0c84e4cd5dae13d186b6099c080137d250a986a",
+        "title": "RISC-V: Added DT_RELR support",
+        "body": "Porting by referring aarch64 and loongarch implementations.\n\nRISC-V and loongarch both have relaxations, so there is also the same thing\nthat it's not safe to do relaxations when updating the section layouts for relr.\n\nFor relr readelf, added is_riscv_special_symbol_name to filter following\nspecial symbols:\n1. mapping symbols\n2. __DATA_BEGIN__, __SDATA_BEGIN__ and __BSS_END__, which are only used for\ncounting gp in riscv.\n\n=====\nv3 changelog,\n1. Rebase onto current trunk.\n2. Place .dynamic after .data in relr-relocs.ld.  Since the linker\n   creates its own dynobj, the orphan .dynamic went before the .data.*\n   orphans and broke relr-data.\n3. Fix the .riscv.attributes typo in relr-relocs.ld.\n4. Add relr-got-start and relr-addend tests, ported from LoongArch, and\n   a relr-relax test for relaxation deleting bytes before packed relocs.\n5. Add a NEWS entry.\n6. Add RISC-V to the ld.texi entry for -z pack-relative-relocs.\n\n=====\nv2 changelog,\n1. rebasing test cases\n2. Only enable dt_relr for linux rather than elf toolchain in\n   ld/emulparams/elf32lriscv-defs.sh\n\nCo-Authored-By: Kito Cheng <kito.cheng@sifive.com>",
+        "author": "Nelson Chu",
+        "timestamp": "2026-10-01T08:23:17Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/b0c84e4cd5dae13d186b6099c080137d250a986a",
+        "files": [
+          "bfd/elfnn-riscv.c",
+          "binutils/readelf.c",
+          "binutils/testsuite/lib/binutils-common.exp",
+          "ld/NEWS",
+          "ld/emulparams/elf32lriscv-defs.sh",
+          "ld/ld.texi",
+          "ld/testsuite/ld-riscv-elf/discard-pic.d",
+          "ld/testsuite/ld-riscv-elf/discard.ld",
+          "ld/testsuite/ld-riscv-elf/discard.s",
+          "ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "ld/testsuite/ld-riscv-elf/relr-addend.d",
+          "ld/testsuite/ld-riscv-elf/relr-addend.s",
+          "ld/testsuite/ld-riscv-elf/relr-align-rv32-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-align-rv32-pic.rd",
+          "ld/testsuite/ld-riscv-elf/relr-align-rv64-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-align-rv64-pic.rd",
+          "ld/testsuite/ld-riscv-elf/relr-align.s",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv32-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv32-pic.rd",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv32-pie.d",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv32-pie.rd",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv64-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv64-pic.rd",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv64-pie.d",
+          "ld/testsuite/ld-riscv-elf/relr-data-rv64-pie.rd",
+          "ld/testsuite/ld-riscv-elf/relr-data.s",
+          "ld/testsuite/ld-riscv-elf/relr-discard-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-discard-pie.d",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv32-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv32-pic.rd",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv32-pie.d",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv32-pie.rd",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv64-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv64-pic.rd",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv64-pie.d",
+          "ld/testsuite/ld-riscv-elf/relr-got-rv64-pie.rd",
+          "ld/testsuite/ld-riscv-elf/relr-got-start.d",
+          "ld/testsuite/ld-riscv-elf/relr-got-start.s",
+          "ld/testsuite/ld-riscv-elf/relr-got.s",
+          "ld/testsuite/ld-riscv-elf/relr-relax.d",
+          "ld/testsuite/ld-riscv-elf/relr-relax.s",
+          "ld/testsuite/ld-riscv-elf/relr-relocs.ld",
+          "ld/testsuite/ld-riscv-elf/relr-textrel-pic.d",
+          "ld/testsuite/ld-riscv-elf/relr-textrel-pie.d",
+          "ld/testsuite/ld-riscv-elf/relr-textrel.s"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "path:bfd/elfnn-riscv.c",
+          "path:ld/emulparams/elf32lriscv-defs.sh",
+          "path:ld/testsuite/ld-riscv-elf/discard-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/discard.ld",
+          "path:ld/testsuite/ld-riscv-elf/discard.s",
+          "path:ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "path:ld/testsuite/ld-riscv-elf/relr-addend.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-addend.s",
+          "path:ld/testsuite/ld-riscv-elf/relr-align-rv32-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-align-rv32-pic.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-align-rv64-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-align-rv64-pic.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-align.s",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv32-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv32-pic.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv32-pie.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv32-pie.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv64-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv64-pic.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv64-pie.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-data-rv64-pie.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-data.s",
+          "path:ld/testsuite/ld-riscv-elf/relr-discard-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-discard-pie.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv32-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv32-pic.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv32-pie.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv32-pie.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv64-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv64-pic.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv64-pie.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-rv64-pie.rd",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-start.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-got-start.s",
+          "path:ld/testsuite/ld-riscv-elf/relr-got.s",
+          "path:ld/testsuite/ld-riscv-elf/relr-relax.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-relax.s",
+          "path:ld/testsuite/ld-riscv-elf/relr-relocs.ld",
+          "path:ld/testsuite/ld-riscv-elf/relr-textrel-pic.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-textrel-pie.d",
+          "path:ld/testsuite/ld-riscv-elf/relr-textrel.s",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "3d79c978b53474d2b613fe3e28037393c8d037b0",
+        "title": "RISC-V: Spill more unsplittable moves [PR127484].",
+        "body": "In the PRs we hit the same problem as before, just this time with a\n(subreg:TF (reg:V4SF)) pun on a 32-bit target and a complex int128.\nThese are different quadword splits than before but they can be\nhandled similarly.  This patch extends riscv_subpart so it\ncan deal with sub-parts of arbitrary modes.  The new functionality\nis then used to move a spilled TFmode value in word-sized chunks.\n\n\tPR target/127484\n\tPR target/127547\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv.cc (riscv_subpart): Add parameters and\n\thandle more part sizes.\n\t(spill_subreg_move): Allow subreg bytes != 0.\n\t(riscv_split_quadword_move):  Use riscv_subpart for TFmode.\n\t* config/riscv/riscv.md (movtf): Add.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/pr127484.c: New test.\n\t* gcc.target/riscv/rvv/autovec/pr127547.c: New test.",
+        "author": "Robin Dapp",
+        "timestamp": "2026-09-28T18:55:40Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/3d79c978b53474d2b613fe3e28037393c8d037b0",
+        "files": [
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/riscv/riscv.md",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/pr127484.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/pr127547.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/pr127484.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/pr127547.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b0434879418053061782e825ea0bf2eadb654b2b",
+        "title": "RISC-V: Compute live ranges for pattern results",
+        "body": "When a stmt is replaced by a pattern stmt during vectorization, the\nexisting live range calculation code still calculates the live range of\nthe original variable, and mark it as alive from the beginning of the\nblock.  Changing that to a live range of the pattern result can lead to\na more precise register pressure estimation.\n\nThe testcase is generated by LLM by adapting the x264 pixel_avg loop.\nWe used the vanilla pixel_avg loop as the testcase downstream because\nour downstream version has other issues that overestimate the required\nregister number.  The adapted case, although not directly encountered in\nbenchmarks, can show that the estimation can be improved on the trunk,\nat least for cases like this, too.\n\nRegtested on rv64gcv and rv32gcv, no regression.\n\nAssisted-by: Codex\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-vector-costs.cc (get_pattern_var): New\n\tfunction.\n\t(costs::compute_local_live_ranges): Replace the argument with\n\tthe pattern result when necessary.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul4-5.c: Remove\n\txfail.\n\t* gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul4-7.c: Ditto.\n\t* gcc.target/riscv/rvv/autovec/pr121910.c: Change expectation.\n\t* gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul8-16.c: New test.",
+        "author": "garthlei",
+        "timestamp": "2026-09-28T15:19:37Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/b0434879418053061782e825ea0bf2eadb654b2b",
+        "files": [
+          "gcc/config/riscv/riscv-vector-costs.cc",
+          "gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul4-5.c",
+          "gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul4-7.c",
+          "gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul8-16.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/pr121910.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:regression",
+          "keyword:vector-crypto-hypervisor:vector",
+          "keyword:vector-crypto-hypervisor:vectorization",
+          "path:gcc/config/riscv/riscv-vector-costs.cc",
+          "path:gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul4-5.c",
+          "path:gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul4-7.c",
+          "path:gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/dynamic-lmul8-16.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/pr121910.c",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "3d5f011ffec35d928577f5cfd24c101c5950ae93",
+        "title": "RISC-V: Add test cases for vfwadd.vf reg overlap",
+        "body": "Add test cases for register group overlap, please\nnote it is not overlap as much as possible.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-mf2.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-09-29T01:45:31Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/3d5f011ffec35d928577f5cfd24c101c5950ae93",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-mf2.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f16-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwadd_vf-f32-mf2.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "5454af039f44aecefbd30fca712e2c5ca0714c5b",
+        "title": "RISC-V: Remove xfail of the vfwadd.vf reg overlap test case",
+        "body": "Remove the xfail of the csrr check after the rvv register overlap\nof vfwadd.vf is allowed.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/base/pr112431-25.c: Remove the xfail\n\tof the csrr check.\n\t* gcc.target/riscv/rvv/base/pr112431-26.c: Ditto.\n\t* gcc.target/riscv/rvv/base/pr112431-27.c: Ditto.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-09-29T01:45:31Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/5454af039f44aecefbd30fca712e2c5ca0714c5b",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-25.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-26.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-27.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-25.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-26.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-27.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "5d2597a0b61da3c48c2f9dd3768c9806c980bbf8",
+        "title": "RISC-V: Add test cases for vfwsub.vf reg overlap",
+        "body": "Add test cases for register group overlap, please\nnote it is not overlap as much as possible.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-mf2.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-09-29T01:45:31Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/5d2597a0b61da3c48c2f9dd3768c9806c980bbf8",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-mf2.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f16-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwsub_vf-f32-mf2.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "ba20ee9a2cd5791cf571c873dbf331cdfbe6181d",
+        "title": "RISC-V: Add test cases for vfwmul.vf reg overlap",
+        "body": "Add test cases for register group overlap, please\nnote it is not overlap as much as possible.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-mf2.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-09-29T01:45:31Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/ba20ee9a2cd5791cf571c873dbf331cdfbe6181d",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-mf2.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f16-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwmul_vf-f32-mf2.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "sailfishos-mirror/glibc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "60b925c18fe6436e0885b2be9fde5d8db3688cbb",
+        "title": "elf: Only build THP tests for ABIs that define THP-PAGE-SIZE",
+        "body": "The THP tests added by 53d909a283085c82bdcc71e1cf06c0899506b664 only\nmake sense for ABIs that support THP. Also, some ABIs have a strict\nlimit for the PT_LOAD alignment value; for instance, on arc, the\nlarge alignment makes the R_ARC_S25W_PCREL branch from __start to\n__libc_start_mainn in the static tests exceed its +-16 6MB range.\n\nExplicit disable the tests on ABIs that do not support it, but\nsetting THP-PAGE-SIZE to 0 and define a suitable value for each\nABI:\n\n* aarch64: 32MB (16KB base pages; 4KB uses 2MB, 64KB uses 512MB which\n  is larger than MAX_THP_PAGESIZE).\n\n* arc: 2MB (MMUv4 only; the kernel supports 2MB and 16MB super pages,\n  but a 16MB PT_LOAD alignment can not be linked on arc.\n\n* arm: 2MB (LPAE only).\n\n* i386: 4MB (non-PAE PGD level huge page; PAE and 64-bit kernels use\n  2MB).\n\n* loongarch: 32MB (default 16KB base pages; 4KB uses 2MB, 64KB uses\n  512MB which is larger than MAX_THP_PAGESIZE).\n\n* mips: 32MB (16KB base pages on 64-bit and 32-bit huge TLB layouts;\n  4KB uses 2MB, 64KB uses 512MB which is larger than MAX_THP_PAGESIZE).\n\n* powerpc: 16MB (book3s64 only; hash MMU with 64KB base pages uses\n  16MB, radix uses 2MB).\n\n* riscv: 2MB (64-bit only).\n\n* s390: 1MB (segment size).\n\n* sparc: 8MB (sparc64 only, unchanged).\n\n* x86_64: 2MB (also for x32).\n\nThe remaining Linux ABIs (alpha, csky, hppa, m68k, microblaze, or1k,\nand sh) do not support transparent huge pages and no longer build the\nTHP tests.\n\nTested with a 'make check run-built-tests=no' on all affected ABIs\nand checked on x86_64-linux-gnu and aarch64-linux-gnu.\n\nReviewed-by: Carlos O'Donell <carlos@redhat.com>",
+        "author": "zatrazz",
+        "timestamp": "2026-09-28T15:57:39Z",
+        "url": "https://github.com/sailfishos-mirror/glibc/commit/60b925c18fe6436e0885b2be9fde5d8db3688cbb",
+        "files": [
+          "sysdeps/unix/sysv/linux/Makefile",
+          "sysdeps/unix/sysv/linux/aarch64/Makefile",
+          "sysdeps/unix/sysv/linux/alpha/Makefile",
+          "sysdeps/unix/sysv/linux/arc/Makefile",
+          "sysdeps/unix/sysv/linux/csky/Makefile",
+          "sysdeps/unix/sysv/linux/hppa/Makefile",
+          "sysdeps/unix/sysv/linux/i386/Makefile",
+          "sysdeps/unix/sysv/linux/loongarch/Makefile",
+          "sysdeps/unix/sysv/linux/m68k/Makefile",
+          "sysdeps/unix/sysv/linux/microblaze/Makefile",
+          "sysdeps/unix/sysv/linux/mips/Makefile",
+          "sysdeps/unix/sysv/linux/or1k/Makefile",
+          "sysdeps/unix/sysv/linux/powerpc/Makefile",
+          "sysdeps/unix/sysv/linux/s390/Makefile",
+          "sysdeps/unix/sysv/linux/sh/Makefile"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:tests",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    }
+  ]
+}
