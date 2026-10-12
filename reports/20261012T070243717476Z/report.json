@@ -1,0 +1,879 @@
+{
+  "schema_version": 1,
+  "window": {
+    "since": "2026-10-04T06:37:39Z",
+    "until": "2026-10-12T07:02:43Z"
+  },
+  "generated_at": "2026-10-12T07:02:43Z",
+  "repositories": [
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-10-04T06:37:39Z",
+      "until": "2026-10-12T07:02:43Z",
+      "collected": 64,
+      "new": 63
+    },
+    {
+      "repo": "gcc-mirror/gcc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-10-04T06:37:39Z",
+      "until": "2026-10-12T07:02:43Z",
+      "collected": 213,
+      "new": 198
+    },
+    {
+      "repo": "sailfishos-mirror/glibc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-10-04T06:37:39Z",
+      "until": "2026-10-12T07:02:43Z",
+      "collected": 22,
+      "new": 22
+    }
+  ],
+  "counts": {
+    "total": 16,
+    "high": 3,
+    "medium": 11,
+    "low": 2,
+    "packaging_candidates": 8,
+    "llm": 0,
+    "rules_only": 16
+  },
+  "warnings": [
+    "RTEMS/sourceware-mirror-binutils-gdb：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "gcc-mirror/gcc：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "分页在第 1 页停止，元数据覆盖不完整。",
+    "未配置 LLM_API_KEY，使用规则结果。"
+  ],
+  "items": [
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "06cee27b6943fdfe6082dbee4c260b2efe22a193",
+        "title": "[RISC-V] Remove obsolete, never taken to silicon xventanacondops extension",
+        "body": "This patch removes the xventanacondops support from GCC.  It was something I\nmeant to do last cycle, but never got around to it.\n\nxventanacondops was specific to the first generation Ventana design which we\nultimately decided to shelve for various reasons.  It was never taken to\nsilicon by anyone.  zicond provides the exact same functionality, but is\nstandardized by RVI and naturally sits in a different encoding space.\n\nI'm keen to avoid keeping around code which will never be used.  Given the\ndesign never made it to silicon, I don't really even see the point in keeping\nthe options lying around for compatibility purposes.  As a result this is a\ncomplete removal.\n\nTested on riscv32-elf and riscv64-elf.  Bootstraps on the various designs will\nhappen tonight as part of the regular cycle.\n\ngcc/\n\t* config/riscv/predicates.md (movcc_operand): Replace\n\tTARGET_ZICOND_LIKE with TARGET_ZICOND.\n\t* config/riscv/riscv.cc (riscv_rtx_costs): Likewise.\n\t(riscv_expand_conditional_move): Likewise.\n\t* config/riscv/riscv-ext-ventana.def: Remove.\n\t* config/riscv/riscv-ext.def: Don't include riscv-ext_ventana.def.\n\t* config/riscv/riscv-ext.opt: Regenerated.\n\t* config/riscv/riscv-opts.h (TARGET_ZICOND_LIKE): Remove.\n\t* config/riscv/riscv.md: Remove references to XVentanacondops.  Replace\n\tTARGET_ZICOND_LIKE with TARGET_ZICOND.\n\t* config/riscv/t-riscv (RISCV_EXT_DEFS): Remove riscv-ext-ventana.def.\n\t* config/riscv/zicond.md: Remove references to XVentanaCondOps.\n\tReplace TARGET_ZICOND_LIKE with TARGET_ZICOND throughout.  Simplify\n\twhere possible.\n\t* doc/riscv-ext.texi: Regenerated.\n\ngcc/testsuite/\n\t* gcc.target/riscv/cset-sext-ventana-rtl.c: Remove.\n\t* gcc.target/riscv/cset-sext-ventana.c: Remove.\n\t* gcc.target/riscv/movdibeq-ventana.c: Remove.\n\t* gcc.target/riscv/movdibfeq-ventana.c: Remove.\n\t* gcc.target/riscv/movdibfge-ventana.c: Remove.\n\t* gcc.target/riscv/movdibfgt-ventana.c: Remove.\n\t* gcc.target/riscv/movdibfle-ventana.c: Remove.\n\t* gcc.target/riscv/movdibflt-ventana.c: Remove.\n\t* gcc.target/riscv/movdibfne-ventana.c: Remove.\n\t* gcc.target/riscv/movdibge-ventana.c: Remove.\n\t* gcc.target/riscv/movdibgeu-ventana.c: Remove.\n\t* gcc.target/riscv/movdibgt-ventana.c: Remove.\n\t* gcc.target/riscv/movdibgtu-ventana.c: Remove.\n\t* gcc.target/riscv/movdible-ventana.c: Remove.\n\t* gcc.target/riscv/movdibleu-ventana.c: Remove.\n\t* gcc.target/riscv/movdiblt-ventana.c: Remove.\n\t* gcc.target/riscv/movdibltu-ventana.c: Remove.\n\t* gcc.target/riscv/movdibne-ventana.c: Remove.\n\t* gcc.target/riscv/movdieq-ventana.c: Remove.\n\t* gcc.target/riscv/movdifeq-ventana.c: Remove.\n\t* gcc.target/riscv/movdifge-ventana.c: Remove.\n\t* gcc.target/riscv/movdifgt-ventana.c: Remove.\n\t* gcc.target/riscv/movdifle-ventana.c: Remove.\n\t* gcc.target/riscv/movdiflt-ventana.c: Remove.\n\t* gcc.target/riscv/movdifne-ventana.c: Remove.\n\t* gcc.target/riscv/movdige-ventana.c: Remove.\n\t* gcc.target/riscv/movdigeu-ventana.c: Remove.\n\t* gcc.target/riscv/movdigt-ventana.c: Remove.\n\t* gcc.target/riscv/movdigtu-ventana.c: Remove.\n\t* gcc.target/riscv/movdile-ventana.c: Remove.\n\t* gcc.target/riscv/movdileu-ventana.c: Remove.\n\t* gcc.target/riscv/movdilt-ventana.c: Remove.\n\t* gcc.target/riscv/movdiltu-ventana.c: Remove.\n\t* gcc.target/riscv/movdine-ventana.c: Remove.\n\t* gcc.target/riscv/movsibeq-ventana.c: Remove.\n\t* gcc.target/riscv/movsibfeq-ventana.c: Remove.\n\t* gcc.target/riscv/movsibfge-ventana.c: Remove.\n\t* gcc.target/riscv/movsibfgt-ventana.c: Remove.\n\t* gcc.target/riscv/movsibfle-ventana.c: Remove.\n\t* gcc.target/riscv/movsibflt-ventana.c: Remove.\n\t* gcc.target/riscv/movsibfne-ventana.c: Remove.\n\t* gcc.target/riscv/movsibge-ventana.c: Remove.\n\t* gcc.target/riscv/movsibgeu-ventana.c: Remove.\n\t* gcc.target/riscv/movsibgt-ventana.c: Remove.\n\t* gcc.target/riscv/movsibgtu-ventana.c: Remove.\n\t* gcc.target/riscv/movsible-ventana.c: Remove.\n\t* gcc.target/riscv/movsibleu-ventana.c: Remove.\n\t* gcc.target/riscv/movsiblt-ventana.c: Remove.\n\t* gcc.target/riscv/movsibltu-ventana.c: Remove.\n\t* gcc.target/riscv/movsibne-ventana.c: Remove.\n\t* gcc.target/riscv/movsieq-ventana.c: Remove.\n\t* gcc.target/riscv/movsifeq-ventana.c: Remove.\n\t* gcc.target/riscv/movsifge-ventana.c: Remove.\n\t* gcc.target/riscv/movsifgt-ventana.c: Remove.\n\t* gcc.target/riscv/movsifle-ventana.c: Remove.\n\t* gcc.target/riscv/movsiflt-ventana.c: Remove.\n\t* gcc.target/riscv/movsifne-ventana.c: Remove.\n\t* gcc.target/riscv/movsige-ventana.c: Remove.\n\t* gcc.target/riscv/movsigeu-ventana.c: Remove.\n\t* gcc.target/riscv/movsigt-ventana.c: Remove.\n\t* gcc.target/riscv/movsigtu-ventana.c: Remove.\n\t* gcc.target/riscv/movsile-ventana.c: Remove.\n\t* gcc.target/riscv/movsileu-ventana.c: Remove.\n\t* gcc.target/riscv/movsilt-ventana.c: Remove.\n\t* gcc.target/riscv/movsiltu-ventana.c: Remove.\n\t* gcc.target/riscv/movsine-ventana.c: Remove.\n\t* gcc.target/riscv/predef-30.c: Remove.\n\t* gcc.target/riscv/ventana-16122.c: Remove.\n\t* gcc.target/riscv/xventanacondops-primitiveSemantics-rv32.c: Remove.\n\t* gcc.target/riscv/xventanacondops-primitiveSemantics.c: Remove.\n\t* gcc.target/riscv/xventanacondops-xor-01.c: Remove.\n\t* gcc.target/riscv/pr116240.c: Change xventanacondops to zicond.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-10-11T18:32:31Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/06cee27b6943fdfe6082dbee4c260b2efe22a193",
+        "files": [
+          "gcc/config/riscv/predicates.md",
+          "gcc/config/riscv/riscv-ext-ventana.def",
+          "gcc/config/riscv/riscv-ext.def",
+          "gcc/config/riscv/riscv-ext.opt",
+          "gcc/config/riscv/riscv-opts.h",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/riscv/riscv.md",
+          "gcc/config/riscv/t-riscv",
+          "gcc/config/riscv/zicond.md",
+          "gcc/doc/riscv-ext.texi",
+          "gcc/testsuite/gcc.target/riscv/cset-sext-ventana-rtl.c",
+          "gcc/testsuite/gcc.target/riscv/cset-sext-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibeq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibfeq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibfge-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibfgt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibfle-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibflt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibfne-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibge-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibgeu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibgt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibgtu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdible-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibleu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdiblt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibltu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdibne-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdieq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdifeq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdifge-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdifgt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdifle-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdiflt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdifne-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdige-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdigeu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdigt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdigtu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdile-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdileu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdilt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdiltu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movdine-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibeq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibfeq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibfge-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibfgt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibfle-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibflt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibfne-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibge-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibgeu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibgt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibgtu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsible-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibleu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsiblt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibltu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsibne-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsieq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsifeq-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsifge-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsifgt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsifle-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsiflt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsifne-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsige-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsigeu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsigt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsigtu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsile-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsileu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsilt-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsiltu-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/movsine-ventana.c",
+          "gcc/testsuite/gcc.target/riscv/pr116240.c",
+          "gcc/testsuite/gcc.target/riscv/predef-30.c",
+          "gcc/testsuite/gcc.target/riscv/ventana-16122.c",
+          "gcc/testsuite/gcc.target/riscv/xventanacondops-primitiveSemantics-rv32.c",
+          "gcc/testsuite/gcc.target/riscv/xventanacondops-primitiveSemantics.c",
+          "gcc/testsuite/gcc.target/riscv/xventanacondops-xor-01.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "compiler-option",
+        "importance": "high",
+        "matched_rules": [
+          "functional:support",
+          "keyword:compiler-option:options",
+          "keyword:isa-extension:extension",
+          "keyword:isa-extension:zicond",
+          "path:gcc/config/riscv/predicates.md",
+          "path:gcc/config/riscv/riscv-ext-ventana.def",
+          "path:gcc/config/riscv/riscv-ext.def",
+          "path:gcc/config/riscv/riscv-ext.opt",
+          "path:gcc/config/riscv/riscv-opts.h",
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/config/riscv/t-riscv",
+          "path:gcc/config/riscv/zicond.md",
+          "path:gcc/doc/riscv-ext.texi",
+          "path:gcc/testsuite/gcc.target/riscv/cset-sext-ventana-rtl.c",
+          "path:gcc/testsuite/gcc.target/riscv/cset-sext-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibeq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibfeq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibfge-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibfgt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibfle-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibflt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibfne-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibge-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibgeu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibgt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibgtu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdible-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibleu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdiblt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibltu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdibne-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdieq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdifeq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdifge-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdifgt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdifle-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdiflt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdifne-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdige-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdigeu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdigt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdigtu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdile-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdileu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdilt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdiltu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movdine-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibeq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibfeq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibfge-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibfgt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibfle-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibflt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibfne-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibge-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibgeu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibgt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibgtu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsible-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibleu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsiblt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibltu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsibne-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsieq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsifeq-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsifge-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsifgt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsifle-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsiflt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsifne-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsige-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsigeu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsigt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsigtu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsile-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsileu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsilt-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsiltu-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/movsine-ventana.c",
+          "path:gcc/testsuite/gcc.target/riscv/pr116240.c",
+          "path:gcc/testsuite/gcc.target/riscv/predef-30.c",
+          "path:gcc/testsuite/gcc.target/riscv/ventana-16122.c",
+          "path:gcc/testsuite/gcc.target/riscv/xventanacondops-primitiveSemantics-rv32.c",
+          "path:gcc/testsuite/gcc.target/riscv/xventanacondops-primitiveSemantics.c",
+          "path:gcc/testsuite/gcc.target/riscv/xventanacondops-xor-01.c",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 编译选项相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "5c624ad4aa3cc5290da28a5c5bcd6bae51b7b0f5",
+        "title": "RISC-V: Add -z zicfilp=, -z zicfiss= and the CFI report options",
+        "body": "Add the linker options for the Zicfilp and Zicfiss GNU properties\ndefined by the RISC-V toolchain conventions [1], with the same meaning\nas in lld:\n\n  -z zicfilp=[implicit|unlabeled|never]\n  -z zicfilp-unlabeled-report=[none|warning|error]\n  -z zicfiss=[implicit|always|never]\n  -z zicfiss-report=[none|warning|error]\n\n`implicit` is the default, so the output has a property only if all\ninputs have it.  `unlabeled` and `always` set the property on the output,\nand `never` clears it.\n\nThe `report` options are independent of the marking options, and report\nnothing by default.\n\n[1] https://github.com/riscv-non-isa/riscv-toolchain-conventions/pull/186",
+        "author": "kito-cheng",
+        "timestamp": "2026-10-08T07:51:12Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/5c624ad4aa3cc5290da28a5c5bcd6bae51b7b0f5",
+        "files": [
+          "bfd/elfnn-riscv.c",
+          "bfd/elfxx-riscv.h",
+          "ld/NEWS",
+          "ld/emultempl/riscvelf.em",
+          "ld/ld.texi",
+          "ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "ld/testsuite/ld-riscv-elf/property-cfi-never.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfilp-bad.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfilp-never.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfilp-unlabeled-report-single.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfilp-unlabeled-report.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfiss-never.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfiss-report-error.d",
+          "ld/testsuite/ld-riscv-elf/property-zicfiss-report.d",
+          "ld/testsuite/ld-riscv-elf/zicfilp-force-plt.d",
+          "ld/testsuite/ld-riscv-elf/zicfilp-force-plt.s",
+          "ld/testsuite/ld-riscv-elf/zicfilp-never-plt.d"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "compiler-option",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:compiler-option:options",
+          "keyword:isa-extension:zicfilp",
+          "keyword:isa-extension:zicfiss",
+          "path:bfd/elfnn-riscv.c",
+          "path:bfd/elfxx-riscv.h",
+          "path:ld/emultempl/riscvelf.em",
+          "path:ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "path:ld/testsuite/ld-riscv-elf/property-cfi-never.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfilp-bad.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfilp-never.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfilp-unlabeled-report-single.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfilp-unlabeled-report.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfiss-never.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfiss-report-error.d",
+          "path:ld/testsuite/ld-riscv-elf/property-zicfiss-report.d",
+          "path:ld/testsuite/ld-riscv-elf/zicfilp-force-plt.d",
+          "path:ld/testsuite/ld-riscv-elf/zicfilp-force-plt.s",
+          "path:ld/testsuite/ld-riscv-elf/zicfilp-never-plt.d",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 编译选项相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "55c6fd1d3ac54ca36983d657e5692b6e9e412148",
+        "title": "RISC-V: Name the missing extension for the MIPS vendor instructions",
+        "body": "riscv_multi_subset_supports_ext has no case for the four\nINSN_CLASS_XMIPS* classes, so a MIPS instruction without its extension\ngives \"internal: unreachable INSN_CLASS_*\" instead of naming the\nextension.\n\nAdd the cases and a test.",
+        "author": "kito-cheng",
+        "timestamp": "2026-10-08T07:24:34Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/55c6fd1d3ac54ca36983d657e5692b6e9e412148",
+        "files": [
+          "bfd/elfxx-riscv.c",
+          "gas/testsuite/gas/riscv/mips-insns-fail.d",
+          "gas/testsuite/gas/riscv/mips-insns-fail.l",
+          "gas/testsuite/gas/riscv/mips-insns-fail.s"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "isa-extension",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:supports",
+          "keyword:isa-extension:extension",
+          "path:bfd/elfxx-riscv.c",
+          "path:gas/testsuite/gas/riscv/mips-insns-fail.d",
+          "path:gas/testsuite/gas/riscv/mips-insns-fail.l",
+          "path:gas/testsuite/gas/riscv/mips-insns-fail.s",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V ISA 扩展相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "de2ea1f8b15f05264310a5e7c29328591c13de49",
+        "title": "[RISC-V] Fix remaining AOP related regressions on the RISC-V port",
+        "body": "On RISC-V steering for AOP sometimes should steer towards PLUS, other times\ntowards IOR.  For example we want PLUS because we have shadd style insns that\nwe can form and PLUS sometimes compresses better.  Sometimes we want IOR\nbecause we can generate single bit manipulations.  Things are made a bit more\ncomplicated by supporting rv32, rv64 and the various relevant extensions.\n\nGenerally if all the arguments are registers, steer towards PLUS if ZBA is\nenabled.  Otherwise steer towards IOR.  The additional wrinkle here is that\nthere aren't sub-word logicals on rv64, so we have to pun them to DImode and\nemit a 64bit operation.\n\nThis fixes the pr80770-2 regression on both riscv32-elf and riscv64-elf and the\npr58727 and pr93504 failures on riscv64-elf and is enough to make everything\nhappy again.  Bootstrapped and regression tested on the k3 and c920 (k1 in\nprogress).\n\ngcc/\n\t* config/riscv/riscv.md (aop<mode>3): New expander.",
+        "author": "Jeff Law",
+        "timestamp": "2026-10-11T15:19:22Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/de2ea1f8b15f05264310a5e7c29328591c13de49",
+        "files": [
+          "gcc/config/riscv/riscv.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:hardware:k3",
+          "keyword:isa-extension:zba",
+          "path:gcc/config/riscv/riscv.md",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "9613bdb1922e62e20da5a2893d27a9f6ef296afc",
+        "title": "[RISC-V] Fix pr58727 code quality regression on RISC-V",
+        "body": "Essentially we have an outer IOR with turns on one or more bits that were\nmasked off by an inner AND.  Previously we'd potentially turn those bits back\non in the AND mask in the hopes the constant would simplify (ideally into a\nsingle bit clear constant).  So instead of bclr+ior were now getting\nand+bclr+plus (and clears low bits, bclr clears a high bit, plus turns on the\njust cleared low bits).\n\nThe steering towards PLUS broke that code.  I tried to fix in simplify-rtx, but\nthings kept getting mucked up as we bubbled out of the various SUBST and\nsimplification calls in combine which is unfortunate as other ports that are\nlimited to single bit manipulation rather than generalized bitfields could\nbenefit.  Also note that since we're dropping that inner AND, we have to change\nthe outer operation back to IOR to keep the semantics correct.\n\nAfter much head-banging I gave in and implemented it in the RISC-V backend ;(\n\nBootstrapped and regression tested on the c920 and k3 (k1 is in progress).\nAlso regression tested on riscv32-elf and riscv64-elf.\n\ngcc/\n\t* config/riscv/bitmanip.md: Add new 3->2 splitter when an outer PLUS\n\tturns on some bits cleared by an inner AND.  Adjust the AND mask and\n\tchange the outer code to IOR.",
+        "author": "Jeff Law",
+        "timestamp": "2026-10-11T14:43:39Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/9613bdb1922e62e20da5a2893d27a9f6ef296afc",
+        "files": [
+          "gcc/config/riscv/bitmanip.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:bugfix:regression",
+          "keyword:hardware:k3",
+          "path:gcc/config/riscv/bitmanip.md",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "527a092ac82424791b15c6db14bfcdcfc56e052c",
+        "title": "xtensa: compare SEC_MERGE literals by their merged addresses",
+        "body": "When two literals hold the same value, the Xtensa linker keeps only\none of them.  It decided two literals were the same if they pointed\nto the same offset in the same input section.\n\nThat is wrong for mergeable string sections (SEC_MERGE), because the\nlinker may move strings while merging duplicates.  Two references\nthat start at the same offset can end up at different addresses.\n\nExample:\n\n    .section .rodata.str1.1,\"aMS\",@progbits,1\n  .LC0:\n    .string \"{\\\"v\\\":7}\"     # offset 0, 8 bytes\n  .LC1:\n    .string \"v\"             # offset 8\n\n    .literal .Lend, .LC0+8  # one past the end of .LC0\n    .literal .Lkey, .LC1\n\nBoth literals point to input offset 8.  If \"v\" is merged with a copy\nin another file, .LC1 moves but .LC0+8 does not.  The linker merged\nthe two literals anyway, so code that loaded .Lkey got the address\nafter \"{\\\"v\\\":7}\" instead of \"v\".\n\nNow compare the addresses the references will have after merging.\nThe assembler writes references in two forms, and they move\ndifferently:\n\n  - \"section + offset\": the offset picks a string, so look up where\n    that string went.\n  - \"symbol + addend\": look up where the symbol went, then add the\n    addend.\n\nrelocate_section and the RISC-V relaxation code compute addresses the\nsame way.\n\nbfd/\n\t* elf32-xtensa.c (r_reloc_merged_offset): New.\n\t(literal_value_equal): Use it for SEC_MERGE sections.\n\nld/\n\t* testsuite/ld-xtensa/coalesce-merge.d,\n\t* testsuite/ld-xtensa/coalesce-merge.t,\n\t* testsuite/ld-xtensa/coalesce-merge-1.s,\n\t* testsuite/ld-xtensa/coalesce-merge-2.s: New test.\n\t* testsuite/ld-xtensa/xtensa.exp: Run it.",
+        "author": "Lapshin",
+        "timestamp": "2026-10-09T11:03:43Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/527a092ac82424791b15c6db14bfcdcfc56e052c",
+        "files": [
+          "bfd/elf32-xtensa.c",
+          "ld/testsuite/ld-xtensa/coalesce-merge-1.s",
+          "ld/testsuite/ld-xtensa/coalesce-merge-2.s",
+          "ld/testsuite/ld-xtensa/coalesce-merge.d",
+          "ld/testsuite/ld-xtensa/coalesce-merge.t",
+          "ld/testsuite/ld-xtensa/xtensa.exp"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "token:risc-v"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "079dc6f5083e3614d52c49de896f33a6c87d4e09",
+        "title": "RISC-V: Suppress may be used uninitialized warning",
+        "body": "We got this warning, but actually insn is always initialized before use.\nSo just init it as 0.\n\nbinutils/bfd/elfnn-riscv.c:2954:9: warning: ‘insn’ may be used uninitialized [-Wmaybe-uninitialized]\n 2954 |         bfd_putl32 (insn, r->contents + r->reloc->r_offset);\n      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+        "author": "kito-cheng",
+        "timestamp": "2026-10-08T13:56:53Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/079dc6f5083e3614d52c49de896f33a6c87d4e09",
+        "files": [
+          "bfd/elfnn-riscv.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "2c4ccb8103d73917d769cf6c35fa8b71424f20ca",
+        "title": "RISC-V: Introduce TLSDESC relaxation.",
+        "body": "In an executable, always turn a TLSDESC access into IE, or into LE when\nthe symbol is local.\n\nWhen the sequence has R_RISCV_RELAX, the relax pass deletes the first\ntwo instructions.  Only the 2 instruction (long) forms are done for now:\n\n  auipc a0, <hi>            lui  a0, <hi>\n  l[dw] a0, <lo>(a0)        addi a0, a0, <lo>\n\nOtherwise, for example with -mno-relax or --no-relax, rewrite the\nsequence in place without changing its size, like lld does:\n\n  auipc tX, %tlsdesc_hi(sym)            nop\n  l[dw] tY, %tlsdesc_load_lo(.L)(tX)    nop\n  addi  a0, tX, %tlsdesc_add_lo(.L)     auipc a0, <hi>  /  lui  a0, <hi>\n  jalr  t0, tY, %tlsdesc_call(.L)       l[dw] a0, <lo>(a0)  /  addi a0, a0, <lo>\n\nThis makes TLSDESC work in static executables, where nothing can\nresolve a TLS descriptor at run time.\n\nbfd/\n\t* elfnn-riscv.c (riscv_elf_tls_type_from_hi_reloc): Pick IE or LE\n\tfor TLSDESC in executables.\n\t(riscv_elf_check_relocs): Update the caller.\n\t(riscv_pcrel_hi_reloc): Add tlsdesc_auipc.\n\t(riscv_pcrel_relocs): Add tlsdesc_lo_relocs.\n\t(riscv_init_pcrel_relocs): Init it.\n\t(riscv_record_pcrel_hi_reloc, riscv_resolve_pcrel_lo_relocs): Init\n\ttlsdesc_auipc.\n\t(riscv_free_lo_relocs): New, split from ...\n\t(riscv_free_pcrel_relocs): ... here.  Free tlsdesc_lo_relocs.\n\t(riscv_record_tlsdesc_lo_reloc): New.\n\t(riscv_resolve_tlsdesc_lo_relocs): New.\n\t(perform_relocation): Handle the internal TLSDESC relocs.\n\t(riscv_elf_relocate_section): Likewise.  Rewrite TLSDESC sequences\n\tthat were not relaxed in place in executables.\n\t(_bfd_riscv_relax_tlsdesc): New.\n\t(riscv_relax_select_shorten): Use it for TLSDESC relocs.\n\t(_bfd_riscv_relax_section): Do not skip TLSDESC relocs against\n\tsymbols that are not defined in a regular object.\n\t* elfxx-riscv.c (howto_table_internal): Add an empty entry for\n\tR_RISCV_TABLE_JUMP, and the internal TLSDESC relocs.\ninclude/\n\t* elf/riscv.h (R_RISCV_TLSDESC_IE_HI, R_RISCV_TLSDESC_IE_LO)\n\t(R_RISCV_TLSDESC_LE_HI, R_RISCV_TLSDESC_LE_LO): New.\nld/\n\t* testsuite/ld-riscv-elf/tlsbin.d: TLSDESC is relaxed now, so\n\texpect no TLSDESC relocs.\n\t* testsuite/ld-riscv-elf/tlsdesc-lib.s: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie.s: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie-dyn.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie-norelax.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie-32.s: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie-32.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie-32-dyn.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-ie-32-norelax.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-le.s: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-le.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-le-norelax.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-unrelaxed.s: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-unrelaxed.d: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-unrelaxed-le.s: New.\n\t* testsuite/ld-riscv-elf/tlsdesc-unrelaxed-le.d: New.\n\t* testsuite/ld-riscv-elf/ld-riscv-elf.exp: Run the new tests.\n\nCo-Authored-By: Kito Cheng <kito.cheng@sifive.com>",
+        "author": "ishitatsuyuki",
+        "timestamp": "2026-10-08T08:11:21Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/2c4ccb8103d73917d769cf6c35fa8b71424f20ca",
+        "files": [
+          "bfd/elfnn-riscv.c",
+          "bfd/elfxx-riscv.c",
+          "include/elf/riscv.h",
+          "ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "ld/testsuite/ld-riscv-elf/tlsbin.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie-32-dyn.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie-32-norelax.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie-32.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie-32.s",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie-dyn.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie-norelax.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-ie.s",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-le-norelax.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-le.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-le.s",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-lib.s",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed-le.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed-le.s",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed.d",
+          "ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed.s"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "path:bfd/elfxx-riscv.c",
+          "path:include/elf/riscv.h",
+          "path:ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "path:ld/testsuite/ld-riscv-elf/tlsbin.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie-32-dyn.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie-32-norelax.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie-32.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie-32.s",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie-dyn.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie-norelax.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-ie.s",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-le-norelax.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-le.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-le.s",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-lib.s",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed-le.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed-le.s",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed.d",
+          "path:ld/testsuite/ld-riscv-elf/tlsdesc-unrelaxed.s",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "34ee5769160d92f958feb286dece925747a47719",
+        "title": "RISC-V: Move STATIC_TLS handling into record_tls_type.",
+        "body": "bfd/Changelog:\n\t* elfnn-riscv.c (riscv_elf_record_tls_type): Add bfd_link_info\n\tparameter and move code from below.\n\t(riscv_elf_check_relocs): Move STATIC_TLS handling into\n\triscv_elf_record_tls_type.\n\tAdd missing early return in the R_RISCV_TPREL_HI20 case.",
+        "author": "ishitatsuyuki",
+        "timestamp": "2026-10-08T07:59:49Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/34ee5769160d92f958feb286dece925747a47719",
+        "files": [
+          "bfd/elfnn-riscv.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "60b08e6b3adf81fbd95cc69511cac640714174e2",
+        "title": "RISC-V: Add elf_link_hash_entry to relax_func args.",
+        "body": "bfd/\n\t* elfnn-riscv.c (riscv_pcgp_hi_reloc): Add a field for hash_entry.\n\t(riscv_record_pcgp_hi_reloc): Add argument and record the\n\thash_entry.\n\t(_bfd_riscv_relax_*): Add unused hash_entry argument.\n\t(_bfd_riscv_relax_pc): Also record the hash_entry, for consistency\n\t (but it is not used by the LO reloc handling).\n\t(_bfd_riscv_relax_section): Move h to outer scope and pass into\n\trelax helpers.\n\nCo-Authored-By: Kito Cheng <kito.cheng@sifive.com>",
+        "author": "ishitatsuyuki",
+        "timestamp": "2026-10-08T07:59:49Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/60b08e6b3adf81fbd95cc69511cac640714174e2",
+        "files": [
+          "bfd/elfnn-riscv.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "701b5cda0b47af1db756addb8a5dc6c9710b0d9c",
+        "title": "RISC-V: Unify TLS handling in check_relocs.",
+        "body": "With the introduction of transition, multiple relocation types may map to\nGOT_TLS_IE or GOT_TLS_LE and it makes more sense to unify the code path to\nperform checks common to them.\n\nbfd/\n\t* elfnn-riscv.c (riscv_elf_check_relocs): Merge switch cases for\n\tTLS relocs.",
+        "author": "ishitatsuyuki",
+        "timestamp": "2026-10-08T07:59:49Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/701b5cda0b47af1db756addb8a5dc6c9710b0d9c",
+        "files": [
+          "bfd/elfnn-riscv.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:bfd/elfnn-riscv.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "d3eea828943c60cfe135c2830a6e7a23e82b11e6",
+        "title": "RISC-V: Update the unlabeled landing pad PLT to the latest psABI",
+        "body": "The psABI landing pad PLT [1] loads the target address into t2 and\njumps through it, both in the PLT entries and in the PLT header.  A\njump through t2 (x7) is a software guarded branch under Zicfilp, so\nits target does not need to start with a landing pad.\n\nUpdate the unlabeled landing pad PLT to match the psABI:\n\n- The PLT entries use t2 instead of t3.\n- The PLT header swaps t2 and t3.\n- The PLT header no longer starts with a landing pad, because the PLT\n  entries reach it through t2.  It also drops the three trailing nops,\n  so it is 32 bytes, the same size as the default PLT header.\n\n  PLT header:\n    1:\tauipc  t3, %pcrel_hi(.got.plt)\n\tsub    t1, t1, t2\n\tl[w|d] t2, %pcrel_lo(1b)(t3)\n\taddi   t1, t1, -(hdr size + 16)\n\taddi   t0, t3, %pcrel_lo(1b)\n\tsrli   t1, t1, log2(16/PTRSIZE)\n\tl[w|d] t0, PTRSIZE(t0)\n\tjr     t2\n\n  PLT entry:\n\tlpad   0\n    1:\tauipc  t2, %pcrel_hi(function@.got.plt)\n\tl[w|d] t2, %pcrel_lo(1b)(t2)\n\tjalr   t1, t2\n\nNOTE: This change is backward compatible since the PLT are generated by\nthe linker, and the linker will generate the new PLT header and entries.\n\n[1] https://github.com/riscv-non-isa/riscv-elf-psabi-doc/pull/417",
+        "author": "kito-cheng",
+        "timestamp": "2026-10-08T07:51:12Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/d3eea828943c60cfe135c2830a6e7a23e82b11e6",
+        "files": [
+          "bfd/elfnn-riscv.c",
+          "ld/testsuite/ld-riscv-elf/zicfilp-unlabeled-plt.d"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "profile-abi",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:isa-extension:zicfilp",
+          "keyword:profile-abi:psabi",
+          "path:bfd/elfnn-riscv.c",
+          "path:ld/testsuite/ld-riscv-elf/zicfilp-unlabeled-plt.d",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V Profile 或 ABI相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "cb663c0073900e7ed764459c1d659c1c85d9d155",
+        "title": "RISC-V: Fix the implied extensions of xsmtvdotii",
+        "body": "riscv_implicit_subsets is walked only once, so an extension must come\nbefore the extensions it implies.  xsmtvdotii implies xsmtvdot, but it\nwas listed after it, so -march=rv64i_xsmtvdotii got xsmtvdot without the\nzve32x that xsmtvdot implies.\n\nSwap the two entries, and add xsmtvdot and xsmtvdotii to the imply test.",
+        "author": "kito-cheng",
+        "timestamp": "2026-10-08T07:24:34Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/cb663c0073900e7ed764459c1d659c1c85d9d155",
+        "files": [
+          "bfd/elfxx-riscv.c",
+          "gas/testsuite/gas/riscv/imply.d",
+          "gas/testsuite/gas/riscv/imply.s"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:compiler-option:-march",
+          "keyword:isa-extension:extension",
+          "keyword:isa-extension:zve32x",
+          "path:bfd/elfxx-riscv.c",
+          "path:gas/testsuite/gas/riscv/imply.d",
+          "path:gas/testsuite/gas/riscv/imply.s",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "fbcafeec06a66175108be68c34aceafba7a453b9",
+        "title": "OpenMP: Add the 'scaled' modifier to the 'simdlen' clause [PR127723]",
+        "body": "This OpenMP 6.1 (TR14) feature was added to handle the fancier\nsimdlen variants of AArch64/RISC-V.\n\nNamely, besides 'simdlen(length)' there is now also an optional scale\nfactor:\n  simdlen( scaled(arith-type [, divisor]) : length )\nwith the scaling factor defaulting to one when absent and otherwise being\n  max(1, round_down(VL(type) / divisor))\nand VL(type) is a target & type specific value, which might be only\nknown at runtime (divisor and length must be >= 1 and constant).\nAnd 'type' is an arithmetic type (C/C++) or numeric intrinsic type\n(Fortran).\n\nThe 'simdlen' with 'scaled' can be specified on 'declare simd', on\nthe 'simd' directive and - as context selector - on 'declare variant'.\n\nThis commit adds support for C and C++, only, and currently fails with\na sorry in gimplify_scan_omp_clauses and simd_clone_clauses_extract.\n\n\tPR middle-end/127723\n\ngcc/ChangeLog:\n\n\t* attribs.cc (omp_declare_simd_clauses_equal): Handle\n\tsimdlen's type and divisor of the scaled modifier.\n\t* omp-general.cc (resolve_omp_target_device_matches,\n\tomp_construct_simd_compare): Likewise.\n\t* gimplify.cc (gimplify_scan_omp_clauses): Remove\n\tsimdlen clause with a sorry when it has a scaled modifier.\n\t* omp-simd-clone.cc (simd_clone_clauses_extract): Likewise.\n\t* tree-core.h (enum omp_clause_code): Update comment for\n\tOMP_CLAUSE_SIMDLEN.\n\t* tree-pretty-print.cc (dump_omp_clause): Handle scaled\n\tmodifier to simdlen.\n\t(dump_omp_context_selector): Fix dumping of simd trait.\n\t* tree.cc (omp_clause_num_ops): OMP_CLAUSE_SIMDLEN takes\n\tnow three operands.\n\t* tree.h (OMP_CLAUSE_SIMDLEN_TYPE,\n\tOMP_CLAUSE_SIMDLEN_DIVISOR): New defines.\n\ngcc/c/ChangeLog:\n\n\t* c-parser.cc (c_parser_omp_clause_simdlen): Handle\n\tsimdlen's type and divisor of the scaled modifier.\n\t* c-typeck.cc (c_finish_omp_clauses): Add comment\n\tabout safelen vs. simdlen with scaled.\n\ngcc/cp/ChangeLog:\n\n\t* parser.cc (cp_parser_omp_clause_simdlen): Handle\n\tsimdlen's type and divisor of the scaled modifier.\n\t* pt.cc (tsubst_omp_clauses): Likewise\n\t* semantics.cc (finish_omp_clauses): Likewise;\n\tadd comment about safelen vs. simdlen with scaled.\n\ngcc/testsuite/ChangeLog:\n\n\t* c-c++-common/gomp/simdlen-scaled-1.c: New test.\n\t* c-c++-common/gomp/simdlen-scaled-2.c: New test.\n\t* c-c++-common/gomp/simdlen-scaled-3.c: New test.\n\t* c-c++-common/gomp/simdlen-scaled-4.c: New test.\n\t* g++.dg/gomp/simdlen-scaled-1.C: New test.\n\t* g++.dg/gomp/simdlen-scaled-2.C: New test.",
+        "author": "tob2",
+        "timestamp": "2026-10-07T04:37:19Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/fbcafeec06a66175108be68c34aceafba7a453b9",
+        "files": [
+          "gcc/attribs.cc",
+          "gcc/c/c-parser.cc",
+          "gcc/c/c-typeck.cc",
+          "gcc/cp/parser.cc",
+          "gcc/cp/pt.cc",
+          "gcc/cp/semantics.cc",
+          "gcc/gimplify.cc",
+          "gcc/omp-general.cc",
+          "gcc/omp-simd-clone.cc",
+          "gcc/testsuite/c-c++-common/gomp/simdlen-scaled-1.c",
+          "gcc/testsuite/c-c++-common/gomp/simdlen-scaled-2.c",
+          "gcc/testsuite/c-c++-common/gomp/simdlen-scaled-3.c",
+          "gcc/testsuite/c-c++-common/gomp/simdlen-scaled-4.c",
+          "gcc/testsuite/g++.dg/gomp/simdlen-scaled-1.C",
+          "gcc/testsuite/g++.dg/gomp/simdlen-scaled-2.C",
+          "gcc/tree-core.h",
+          "gcc/tree-pretty-print.cc",
+          "gcc/tree.cc",
+          "gcc/tree.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "token:risc-v"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "be2755d55421ace63363402901b4e0e2f07f798c",
+        "title": "[committed][RISC-V] Fix one more test fallout from AOP work on RISC-V",
+        "body": "One more adjustment related to AOP.  I overlooked this testcase this when\ntesting patches individually earlier today.\n\nWe have a splitter that's supposed to recognize cases where we have (x << C1) +\nC2 that can be profitably rewritten into (x + C2') << C1.  After the AOP\nchanges that splitter is firing in a case where we don't want it.  In\nparticular when Zbkb is enabled and the shift count is half the word size.\nThat scenario is tailor made for the pack family in Zbkb.\n\nThis patch adjusts the condition for the splitter so that it doesn't apply in\nthat case.\n\nThis was part of the kit that tested overnight.  SO it's been through bootstrap\nand regression test as well as testing on riscv64-elf and riscv32-elf.\n\ngcc/\n\t* config/riscv/riscv.md ((x << C1) + C2 splitter): Do not\n\ttrigger for Zbkb when C1 is half the word size.",
+        "author": "Jeff Law",
+        "timestamp": "2026-10-11T20:11:28Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/be2755d55421ace63363402901b4e0e2f07f798c",
+        "files": [
+          "gcc/config/riscv/riscv.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/config/riscv/riscv.md",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "9d11ed33f54b395948521654218e2eb98c237b0e",
+        "title": "[RISC-V] Fix pack* tests for RISC-V after any-or-plus changes",
+        "body": "The RISC-V port has had a handful of scan-asm failures since the most recent\nany-or-plus patches.  This isn't a huge surprise.  This is the first of a few\npatches to get regression testing happy again.\n\nThis particular patch focuses on the pack family.  They're a poster-child for\nAOP in the sense we've going to have an operation like IOR/XOR/PLUS where the\ntwo inputs are known to have zero overlap in set bits.  With generic parts of\nthe compiler steering towards PLUS, the explicit IOR matching RTL no longer\nworks.  Fixing these is pretty simple, mostly a matter of creating a code\niterator and using it in the pack patterns.\n\nAdditionally, there's costing code that needs to be updated for the new forms\nthat are showing up.  When the pack instructions were added we had to special\ncase them in riscv_rtx_costs or they'd get horribly (5X reality) costed and\ncombine would reject.  We just copy that over to the PLUS handling.\n\nThis stands on its own regardless of how we're steering AOP as it merely\nsupports the additional valid forms.\n\nThis fixes all the pack* failures in the default test runs for riscv32-elf and\nriscv64-elf.  It's been bootstrapped and regression tested on the k3 and c920\nas part of the larger set of patches (k1 is still in progress, but not\nexpecting problems).\n\ngcc/\n\t* config/riscv/iterators.md (oxp): New code iterator.\n\t* config/riscv/crypto.md (pack patterns and splitters): Accept\n\toxp in matching RTL.  Fix whitespace goofs.  Generate the PLUS\n\tforms when possible in splitters.\n\t* config/riscv/riscv.cc (riscv_rtx_cost, case PLUS): Handle\n\tPLUS form of pack instructions.\n\t(riscv_move_integer): Trivial adjustment for crypto.md changes.",
+        "author": "Jeff Law",
+        "timestamp": "2026-10-11T14:30:52Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/9d11ed33f54b395948521654218e2eb98c237b0e",
+        "files": [
+          "gcc/config/riscv/crypto.md",
+          "gcc/config/riscv/iterators.md",
+          "gcc/config/riscv/riscv.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:tests",
+          "path:gcc/config/riscv/crypto.md",
+          "path:gcc/config/riscv/iterators.md",
+          "path:gcc/config/riscv/riscv.cc",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    }
+  ]
+}
