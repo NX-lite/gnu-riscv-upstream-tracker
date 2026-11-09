@@ -1,0 +1,1879 @@
+{
+  "schema_version": 1,
+  "window": {
+    "since": "2026-11-01T07:25:13Z",
+    "until": "2026-11-09T07:43:14Z"
+  },
+  "generated_at": "2026-11-09T07:43:14Z",
+  "repositories": [
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-11-01T07:25:13Z",
+      "until": "2026-11-09T07:43:14Z",
+      "collected": 82,
+      "new": 72
+    },
+    {
+      "repo": "gcc-mirror/gcc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-11-01T07:25:13Z",
+      "until": "2026-11-09T07:43:14Z",
+      "collected": 260,
+      "new": 245
+    },
+    {
+      "repo": "sailfishos-mirror/glibc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-11-01T07:25:13Z",
+      "until": "2026-11-09T07:43:14Z",
+      "collected": 42,
+      "new": 42
+    }
+  ],
+  "counts": {
+    "total": 37,
+    "high": 13,
+    "medium": 19,
+    "low": 5,
+    "packaging_candidates": 24,
+    "llm": 0,
+    "rules_only": 37
+  },
+  "warnings": [
+    "RTEMS/sourceware-mirror-binutils-gdb：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "gcc-mirror/gcc：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "分页在第 1 页停止，元数据覆盖不完整。",
+    "未配置 LLM_API_KEY，使用规则结果。"
+  ],
+  "items": [
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "ae820c0e4c2e13177bdb5d811c9a76f6fa955248",
+        "title": "[RISC-V] Drop unnecessary shifting when upper bits are not read after bitfield extraction",
+        "body": "Another small improvement to x264 discovered by LLM review of execution block data.\n\nIn this case we've got a shift pair that creates a bit field of 32 or more\nbits.  However, subsequent insns (PLUS in this case) never read beyond the 32nd\nbit.  Knowing those upper bits are do-not-cares we can simplify the bitfield\nextraction and eliminate one of the shifts.  This can almost certainly be\nextended to cover other ops that have widening forms if they show up in\npractice.\n\next-dce doesn't directly help here, though perhaps it could be taught to use\nits data for the same kind of optimization.  Given I'm not at all a fan of\next-dce implementation, I'm not inclined to add more functionality to its\ncurrent implementation.\n\nThis is in the noise for x264, but given the analysis has been done and the\npattern was trivial and reasonably generic I'm going ahead with it on the hopes\nthat it matters somewhere else ;-)\n\nRegression tested on riscv32-elf and riscv64-elf.  Bootstrapped and regression\ntested on the c920.  K3 is in flight.  K1 is queued.\n\nAssisted-By: Claude for investigation and testcase.\n\ngcc/\n\t* config/riscv/riscv.md (bitfield extraction splitter): New splitter\n\tfor cases when high bits of a bitfield extraction are never read.\n\ngcc/testsuite/\n\t* gcc.target/riscv/shift-shift-8.c: New test.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-11-08T05:24:41Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/ae820c0e4c2e13177bdb5d811c9a76f6fa955248",
+        "files": [
+          "gcc/config/riscv/riscv.md",
+          "gcc/testsuite/gcc.target/riscv/shift-shift-8.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:hardware:k3",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/testsuite/gcc.target/riscv/shift-shift-8.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "13b88db79f8a63a9a64138ae72e1ed3580196b2c",
+        "title": "[committed][RISC-V] Use bseti rather than li+add when safe to do so and split more intelligently",
+        "body": "Another small improvement discovered by LLM scanning that ballooned a bit to\ncover something I've thought we should do for quite a while.\n\nThe LLM finding was conceptually simple.  We wanted to add 0x8000 to an\nexisting value.  Naturally we have to synthesize the constant 0x8000 (lui),\nthen issue the add.  But in this case we know the other addend has bit 0x8000\nclear, so instead we can just use bseti to set the bit.  That's ~13m dynamic\ninstructions.  So tiny, especially since the constant load can issue whenever\nit's convenient.  But, it's analyzed and understood and the patch to fix looked\nsimple :-)  And it turns out to be a regression as well.  So definitely want to\ngo ahead and fix now that I've got awareness and a testcase.\n\nThe patch to fix that adjusts the AOP expander to accept single bit constants\nso that we can steer towards IOR.  That's always been what I've wanted to do\nhere.  So the fact that it wasn't is just a bug IMHO.  So adjust the expander,\nwe see the li+add turn into a bseti.  Good.\n\nBut the assembly has gained an annoying sign extension.  So we've still got a\ncode quality regression, it's just morphed into another form.\n\nThe eliminate the sign extend we need a fairly generic splitter that I've been\nmeaning to write for years, but never found the proper motivation.\n\nConsider this:\n\nTrying 11, 13 -> 14:\n  11: r147:DI=r143:DI+r144:DI\n     REG_DEAD r144:DI\n     REG_DEAD r143:DI\n  13: r141:SI#0=r147:DI|0x8000\n     REG_DEAD r147:DI\n  14: r148:DI=sign_extend(r141:SI)\n     REG_DEAD r141:SI\nFailed to match this instruction:\n(set (reg:DI 148 [ _4 ])\n   (ior:DI (sign_extend:DI (plus:SI (subreg:SI (reg:DI 143) 0)\n               (subreg:SI (reg:DI 144) 0)))\n       (const_int 32768 [0x8000])))\n\nSo combine has done all the right things here.  In particular the SIGN_EXTEND\nhas been pushed in so that it applies to the PLUS rather than the IOR.\nUnfortunately the generic splitting in combine wants to split at the PLUS\nrather than its enclosing SIGN_EXTEND.  So we get this:\n\nSuccessfully matched this instruction:\n(set (reg:SI 141 [ _4 ])\n   (plus:SI (subreg:SI (reg:DI 143) 0)\n       (subreg:SI (reg:DI 144) 0)))\nFailed to match this instruction:\n(set (reg:DI 148 [ _4 ])\n   (ior:DI (sign_extend:DI (reg:SI 141 [ _4 ]))\n       (const_int 32768 [0x8000])))\n\nIf we just split it differently we'd get better code because rv64 has sign\nextending arithmetic.\n\nSo this patch also introduces a set of generic splitters meant to split the\nright operations at the SIGN_EXTEND point and voila regression fixed.  It\ncovers the major W form instructions (add, sub, shifts, rotates, multiply &\ndivide).  This is generic and is likely to help in tiny ways elsewhere too.\n\nAssisted-By: LLM (Claude) for discovery and testcase generation.\n\nBootstrapped and regression tested on the c920, K3 is still spinning on K1 is\nqueued.  Also regression tested on riscv64-elf and riscv32-elf.   Pushing to\nthe trunk.\n\ngcc/\n\t* config/riscv/iterators.md (sext_w_binop): New iterator.\n\t* config/riscv/predicates.md (arith_or_single_bit_operand): New.\n\t* config/riscv/riscv.md (aop<mode>3): Steer more single bit sets\n\ttowards IOR.\n\t* config/riscv/bitmanip.md (ior of sign extended operation): New\n\tsplitters.  Add splitter for setting a single bit via bseti when\n\tthe object being modified has a zero at that bit.\n\ngcc/testsuite\n\t* gcc.target/riscv/zbs-bseti-disjoint-add.c: New test.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-11-08T05:08:43Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/13b88db79f8a63a9a64138ae72e1ed3580196b2c",
+        "files": [
+          "gcc/config/riscv/bitmanip.md",
+          "gcc/config/riscv/iterators.md",
+          "gcc/config/riscv/predicates.md",
+          "gcc/config/riscv/riscv.md",
+          "gcc/testsuite/gcc.target/riscv/zbs-bseti-disjoint-add.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:extend",
+          "keyword:hardware:k3",
+          "keyword:isa-extension:extension",
+          "path:gcc/config/riscv/bitmanip.md",
+          "path:gcc/config/riscv/iterators.md",
+          "path:gcc/config/riscv/predicates.md",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/testsuite/gcc.target/riscv/zbs-bseti-disjoint-add.c",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b9b7ba1475201499aae35b1aaf7a797d5a9c4d6f",
+        "title": "[RISC-V] Add splitter to enable narrowing load in a load->shift->store sequence",
+        "body": "I'm not terribly happy with this case.\n\nThe basic idea here is we're seeing a load into a wider mode like SI, a right\nshift by 8 positions, then a narrow store of that result (HI).\n\nIf the target supports fast unaligned access, then that's just a HI load\nfollowed by a HI store.  Obviously this generalizes and appears to be a\nrun-of-the-mill 3->2 splitter.  Combine is able to simplify the sequence from\nthe wide load, shift, narrow store to just a narrow load + narrow store.  It\ntakes care of adjusting the address, mode switches, etc.  So the matching rtl\nis just:\n\n(set (mem) (mem)).\n\nThat's both the beauty and worry I have.  It's great that combine was able to\nsee through the sequence and boil it down to its essence, but at that the same\ntime that leaves us with a splitter that matches much more generally than I\nwould have preferred.\n\nChecking volatile on the source operand is critical since the load itself gets\nnarrowed.  I couldn't convince myself that the same couldn't (in theory) happen\nwith the destination operand if it were being stored back to a location and\nonly changed a subset of bytes from a prior known value.  So while it's\nprobably not strictly necessary today, better safe than sorry.\n\nAnother 13M (drop in the bucket) dynamic instructions gone.\n\nBootstrapped and regression tested on K3 and c920, K1 in flight.  Also\nregression tested on riscv64-elf and riscv32-elf.  Pushing to the trunk.\n\ngcc/\n\t* config/riscv/riscv.md (load->store splitter): New splitter for capturing\n\tnarrowing loads in load -> shift -> narrow store sequence.\n\ngcc/testsuite\n\t* gcc.target/riscv/load-no-shift.c: New test.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-11-07T15:09:06Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/b9b7ba1475201499aae35b1aaf7a797d5a9c4d6f",
+        "files": [
+          "gcc/config/riscv/riscv.md",
+          "gcc/testsuite/gcc.target/riscv/load-no-shift.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:enable",
+          "functional:supports",
+          "keyword:hardware:k3",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/testsuite/gcc.target/riscv/load-no-shift.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "58f804554996fe057e5ca4fc814449640a6e816c",
+        "title": "c, c++, middle-end, i386: Introduce __builtin_clmulg builtin [PR128111]",
+        "body": "The https://wg21.link/P3642R7 paper proposes to add std::clmul and\nstd::widening_clmul function templates.  Because many targets have\ninstructions to implement some cases of the carry-less product in\nhardware and there are various optimizations only the compiler can do\nand lots of different ways to open code it in the source, I think we\nneed a builtin and pattern matching is of limited use.\nNow, clang added __builtin_elementwise_clmul builtin for this, but\n1) we don't have any __builtin_elementwise_* builtins so far and no\n   agreement on those\n2) the builtin only provides type-generic scalar (and vector)\n   T = clmul (T, T) operation, but many targets actually have\n   instructions to perform widening clmul (e.g. x86 64x64->128,\n   etc.), and because std::widening_clmul needs the latter, I think\n   it is useful to have a builtin that can handle both\nSo, the following patch introduces a __builtin_clmulg builtin instead,\nif we ever decide to add support of __builtin_elementwise_* builtins\nwe can certainly add easily support for the clang one as well.\nNow, because it is a type-generic builtin, for the widening case\nthere is a problem that we sometimes don't actually have wider types.\nFor 32-bit targets without _BitInt there is no type wider than\nunsigned long long, for 64-bit targets without _BitInt there is no\ntype wider than unsigned __int128, for _BitInt target there is no\ntype wider than unsigned _BitInt(__BITINT_MAXWIDTH__).\nSo, having a builtin which for 2 arguments of the same type returns\nsome other type with precision twice as big would only work sometimes.\nInstead of this, the builtin has 2 or 3 arguments, as if\n  template <__unsigned_integer T>\n  T __builtin_clmulg (T, T);\nand\n  template <__unsigned_integer T>\n  T __builtin_clmulg (T, T, T *);\nwhere the former computes the low __builtin_popcountg ((T) ~(T) 0)\nbits of the result, while the latter returns the same plus stores\nthe remaining higher bits of the result to what the third argument\npoints to (similarly to e.g. __builtin_mul_overflow, except that\n__builtin_mul_overflow returns just bool, and accepts arbitrary\nset of types, while this one requires all of them to be the same).\n\nUnder the hood, this is implemented using two new internal functions,\nIFN_CLMUL which returns just the low bits of the result, and\nIFN_CLMUL_WIDEN which is similar to IFN_MUL_OVERFLOW etc. in that\nit returns COMPLEX_TYPE result with real part being the low half\nand imag part being the high half.\nAs for the implementation, various targets have hw instructions\nfor some cases of this.\nx86 has pclmulqdq (64x64->128) and vcplmulqdq (vector version of that),\narm/aarch64 has some vmul*/pmul* which can do all kinds of stuff\ndepending on ISA (8x8->8, 8x8->16, 32x32->64, 64x64->128,\npowerpc has vpsum* (8x8->16, 16x16->32, 32x32->64, 64x64->128), including\nvector in some cases,\nriscv has clmul and clmulh (both together can do 32x32->64 resp.\n64x64->128 depending on mode, only clmul can do 32x32 resp. 64x64)\nand vclmul* to handle vectors,\nsparc has xmulx and xmluxhi (64x64->128 together, 64x64 the first),\ns390x has vgfm, vgfma (8x8->16, 16x16->32, 32x32->64, 64x64->128).\nThis patch implements just the x86 part, I'll defer to target maintainers\nto do the other arches.\n\nFor software implementation fallback, there are various algorithms.\nOne is the naive O(n^2),\nT clmul_naive (T x, T y) {\n  T r = 0;\n  for (int i = 0; i < __builtin_popcountg ((T) ~(T) 0); ++i)\n    if ((unsigned) (y >> i) & 1)\n      r ^= x << i;\n  return r;\n}\nT2 below is unsigned type with twice the precision of T:\nT2 clmul_naive_widen (T x, T y) {\n  T2 r = 0;\n  for (int i = 0; i < __builtin_popcountg ((T) ~(T) 0); ++i)\n    if ((unsigned) (y >> i) & 1)\n      r ^= ((T2) x) << i;\n  return r;\n}\nanother is using Kronecker substitution, depending on maximum number of\nactive bits in the operands and whether it is the non-widening or widening\ncase one chooses S in [1, 13] such as for N (precision or max number of\nactive bits) N <= S * ((1 << S) - 1) (for the widening case) or\nN <= S * (1 << S) (for the non-widening one; this is all about how\nmany additions during the multiplication still don't cause carry over\nthe given spacing, e.g. for S = 4 0x1111111111111111ULL * 0x11111111ULL\nis 0x8888888887654321ULL, so there is no carry over the 4 bits but one\nalready over the 3 bits, 0x1111111111111111ULL * 0x11111111111111ULL\n0xeeedcba987654321ULL so getting closer, and\n0x1111111111111111ULL * 0x1111111111111111ULL being\n0xfedcba987654321ULL, where there is still no carry over from one group\nto another within the least significant 64 bits, but there is one above\nthat already; unsigned _BitInt(60) can use safely S = 4 even in the\nwidening case, but unsigned _BitInt(64) only in the non-widening one\nand for widening it needs to use S = 5 (where 5 * 5 multiplications\nat least if implemented in hw is still better than 4 * 4 * 2),\nT clmul_kronecker (T x, T y, int S) {\n  T mask = std::bit_repeat ((T) 1, S);\n  T xa[S], ya[S], r = 0;\n  for (int i = 0; i < S; ++i) {\n    xa[i] = x & (mask << i); ya[i] = y & (mask << i);\n  }\n  for (int i = 0; i < S; ++i) {\n    T t = 0;\n    for (int j = 0; j < S; ++j)\n      t ^= xa[j] * ya[(i + S - j) % S];\n    t &= (mask << i);\n    r |= t;\n  }\n  return r;\n}\nT2 clmul_kronecker_widen (T x, T y, int S) {\n  T maskn = std::bit_repeat ((T) 1, S);\n  T2 mask = std::bit_repeat ((T2) 1, S);\n  T2 xa[S], ya[S], r = 0;\n  for (int i = 0; i < S; ++i) {\n    xa[i] = x & (maskn << i); ya[i] = y & (maskn << i);\n  }\n  for (int i = 0; i < S; ++i) {\n    T2 t = 0;\n    for (int j = 0; j < S; ++j)\n      t ^= xa[j] * ya[(i + S - j) % S];\n    t &= (mask << i);\n    r |= t;\n  }\n  return r;\n}\nanother one is recursive, e.g. adjusted Karatsuba multiplication,\nTH is a type with half the precision of T:\nT2 clmul_karatsuba_widen (T x, T y) {\n  int N = __builtin_popcountg ((T) ~(T) 0);\n  TH x0 = x, x1 = x >> (N / 2);\n  TH y0 = y, y1 = y >> (N / 2);\n  T l = clmul_widen (x0, y0);\n  T m = clmul_widen (x0 ^ x1, y0 ^ y1);\n  T h = clmul_widen (x1, y1);\n  m ^= l ^ h;\n  return (((T2) h) << N) | (((T2) m) << (N / 2)) | l;\n}\nand if we have a non-widening clmul, we can do:\nT2 clmul_bitreverse_widen (T x, T y) {\n  int N = __builtin_popcountg ((T) ~(T) 0);\n  T l = clmul (x, y);\n  T h = __builtin_bitreverseg (clmul (__builtin_bitreverseg (x),\n                                      __builtin_bitreverseg (y))) >> 1;\n  return (((T2) h) << N) | l;\n}\nThe following patch uses all of these algorithms depending on circumstances.\nFor wi::clmul it uses the naive one, for expansion obviously attempts to\nuse optabs first and then chooses among the rest.\n\nFor _BitInt lowering, it uses an optimized version of the naive one,\nwhile theoretically a recursive algorithm could be best, we don't even\nhandle normal multiplication that way in libgcc right now.  And from\nmy benchmarking on x86_64 (see the PR for details), the optimized version\nof the naive algorithm consistently beat the Kronecker one when there is\nno corresponding hw multiply (while the non-optimized naive was always\nslower than the Kronecker substitution).  And the naive one is smallest\nin the emitted code.\n\nThe patch doesn't add any libgcc libcalls right now, I'm not sure if\nwe want to do that or not, the problem is that having too many different\ncases in libgcc would be code bloat for programs which don't use this,\nand choosing just one or two could be too slow in case we only need fewer\nbits.  In any case, libgcc libcalls can be added later on, including in\nfuture GCC relelases.\n\nI admit I haven't figured out how the IFNs work with ranges, the only\nthing I know is that if the x and y operands have some trailing zeros,\nctz (clmul_widen (x, y)) == ctz (x) + ctz (y), and\nclz (clmul_widen (x, y)) == clz (x) + clz (y) + 1.  Not implemented\nfor now, neither in CCP nor in the ranger.\n\nPossible future optimization might be to lower the two IFNs to their\nfallback if optabs are missing, and either let the SLP vectorizer\nvectorize it (it doesn't currently) or vectorize it manually,\ne.g. the Kronecker substitution algorithm could very well perform some\nvector permutations and perform e.g. 4 multiplications at a time, etc.\nThe paper also talks about the case that clmul (x, x) can be implemented\nmore efficiently.  And perhaps we could eventually pattern match the\nclmul and reversed clmul of reversed args shifted down by 1 as widening\nclmul.\n\nThe FE changes are mostly following what is done for __builtin_bswapg\nor __builtin_bitreverseg already, as similarly to those this is\na type-generic builtin with the return type dependent on the argument\ntype(s).\n\n2026-11-07  Jakub Jelinek  <jakub@redhat.com>\n\n\tPR middle-end/128111\n\t* doc/extend.texi (__builtin_clmulg): Document.\n\t* builtins.h (fold_build_builtin_clmulg): Declare.\n\t* fold-const-call.cc (fold_const_call_sss): Handle CFN_CLMUL.\n\t(fold_const_call): Handle CFN_CLMUL_WIDEN.\n\t* internal-fn.h (expand_CLMUL, expand_CLMUL_WIDEN): Declare.\n\t* fold-const.cc (tree_call_nonnegative_p): Handle CFN_CLMUL.\n\t* wide-int.cc (wi::bit_repeat, wi::clmul): New functions.\n\t* wide-int.h (wi::bit_repeat, wi::clmul): Declare.\n\t* builtins.cc (fold_build_builtin_clmulg): New function.\n\t* internal-fn.def (CLMUL, CLMUL_WIDEN): New internal functions.\n\t* internal-fn.cc (commutative_binary_fn_p): Handle IFN_CLMUL\n\tand IFN_CLMUL_WIDEN.\n\t(expand_clmul, expand_CLMUL, expand_CLMUL_WIDEN): New functions.\n\t* optabs.def (clmul_optab, clmul_widen_optab): New optabs.\n\t* gimple-lower-bitint.cc (struct bitint_large_huge): Declare\n\tlower_clmul method.\n\t(bitint_large_huge::lower_clmul): New method.\n\t(bitint_large_huge::lower_call): Handle IFN_CLMUL.\n\t(bitint_large_huge::lower_stmt): Likewise.\n\t(stmt_needs_operand_addr): Likewise.\n\t(build_bitint_stmt_ssa_conflicts): Likewise.\n\t(gimple_lower_bitint): Lower IFN_CLMUL_WIDEN to 2 IFN_CLMUL\n\tcalls, 3 IFN_BITREVERSE calls, one shift and one COMPLEX_EXPR.\n\tHandle IFN_CLMUL.\n\t* match.pd (.CLMUL (X, Y) for [0, 1] Y -> X * Y,\n\t.CLMUL_WIDEN (X, Y) -> { .CLMUL (X, 0), 0 } if upper bits are\n\tknown to be zeros): New simplifications.\n\t* genmatch.cc (genmatch_diag_selftests): CFN_CLMUL and CFN_CLMUL_WIDEN\n\tare commutative.\n\t(commutative_op): Handle CFN_CLMUL and CFN_CLMUL_WIDEN.\n\t* config/i386/sse.md (clmuldi3, clmul_widendi3): New expanders.\ngcc/c-family/\n\t* c-common.h (enum rid): Add RID_BUILTIN_CLMULG enumerator.\n\t* c-common.cc (c_common_reswords): Add __builtin_clmulg entry.\ngcc/c/\n\t* c-parser.cc (c_parser_postfix_expression): Handle\n\tRID_BUILTIN_CLMULG.  Use argument locations when reporting\n\tproblems with a single argument.\n\t* c-decl.cc (names_builtin_p): Handle RID_BUILTIN_CLMULG.\ngcc/cp/\n\t* parser.cc (cp_parser_postfix_expression): Handle RID_BUILTIN_CLMULG.\n\t* typeck.cc (build_x_clmulg): New function.\n\t* cp-tree.h (build_x_clmulg): Declare.\n\t* pt.cc (tsubst_expr): Handle IFN_CLMUL.\n\t* mangle.cc (write_expression): Likewise.\n\t* cp-objcp-common.cc (names_builtin_p): Handle RID_BUILTIN_CLMULG.\n\t* cp-gimplify.cc (cp_gimplify_expr): Handle IFN_CLMUL.\n\t* constexpr.cc (cxx_eval_internal_function): Likewise.\n\t(potential_constant_expression_1): Likewise.\ngcc/testsuite/\n\t* c-c++-common/builtin-clmulg-1.c: New test.\n\t* c-c++-common/builtin-clmulg-2.c: New test.\n\t* g++.dg/ext/builtin-clmulg-1.C: New test.\n\t* gcc.target/i386/pclmul-builtin-clmulg-1.c: New test.\n\nReviewed-by: Richard Biener <rguenth@suse.de>\nReviewed-by: Jason Merrill <jason@redhat.com>\nReviewed-by: Marek Polacek <polacek@redhat.com>",
+        "author": "jakubjelinek",
+        "timestamp": "2026-11-07T08:47:44Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/58f804554996fe057e5ca4fc814449640a6e816c",
+        "files": [
+          "gcc/builtins.cc",
+          "gcc/builtins.h",
+          "gcc/c-family/c-common.cc",
+          "gcc/c-family/c-common.h",
+          "gcc/c/c-decl.cc",
+          "gcc/c/c-parser.cc",
+          "gcc/config/i386/sse.md",
+          "gcc/cp/constexpr.cc",
+          "gcc/cp/cp-gimplify.cc",
+          "gcc/cp/cp-objcp-common.cc",
+          "gcc/cp/cp-tree.h",
+          "gcc/cp/mangle.cc",
+          "gcc/cp/parser.cc",
+          "gcc/cp/pt.cc",
+          "gcc/cp/typeck.cc",
+          "gcc/doc/extend.texi",
+          "gcc/fold-const-call.cc",
+          "gcc/fold-const.cc",
+          "gcc/genmatch.cc",
+          "gcc/gimple-lower-bitint.cc",
+          "gcc/internal-fn.cc",
+          "gcc/internal-fn.def",
+          "gcc/internal-fn.h",
+          "gcc/match.pd",
+          "gcc/optabs.def",
+          "gcc/testsuite/c-c++-common/builtin-clmulg-1.c",
+          "gcc/testsuite/c-c++-common/builtin-clmulg-2.c",
+          "gcc/testsuite/g++.dg/ext/builtin-clmulg-1.C",
+          "gcc/testsuite/gcc.target/i386/pclmul-builtin-clmulg-1.c",
+          "gcc/wide-int.cc",
+          "gcc/wide-int.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:added",
+          "functional:extend",
+          "functional:implement",
+          "functional:introduce",
+          "functional:support",
+          "keyword:vector-crypto-hypervisor:vector",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "21737cb4a88facdf0a039ff5785f84ce8329b9fc",
+        "title": "[RISC-V] Add missing splitters for zicond sequences",
+        "body": "LLVM review of x264 code on RISC-V showed that we were missing splitters for\n(LT/LTU & EQ/NE) and (LE/LEU & EQ/NE).  Essentially with the logical AND we can\nget the operands in either order and a subset of the splitters didn't have\nforms with the two operands reversed.\n\nThis adds the two missing splitters.  It should save ~10M instructions on x264\ninput #1, so pretty tiny, but very clearly an oversight in zicond.md.\n\nRegression tested on riscv32-elf and riscv64-elf.  Bootstrapped and regression\ntested on the C920 and K3.  K1 is queued.  Pushing to the trunk.\n\ngcc/\n\t* config/riscv/zicond.md (zicond splitters): Add missing splits for\n\t(LT/LTU & EQ_NE) and (LE/LEU & EQ/NE).\n\ngcc/testsuite\n\t* gcc.target/riscv/pr57650-2.c: New test.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-11-05T14:24:58Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/21737cb4a88facdf0a039ff5785f84ce8329b9fc",
+        "files": [
+          "gcc/config/riscv/zicond.md",
+          "gcc/testsuite/gcc.target/riscv/pr57650-2.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:adds",
+          "keyword:hardware:k3",
+          "keyword:isa-extension:zicond",
+          "path:gcc/config/riscv/zicond.md",
+          "path:gcc/testsuite/gcc.target/riscv/pr57650-2.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "8ce5e39048138fb92ebebc4a72114d9e55fa7a91",
+        "title": "RISC-V: Extract subvectors via vec_perm_const.",
+        "body": "This patch adds a const-perm recoginzer for subvector extractions.  The\nimplementation is exactly the same as what vec_extract is doing, just\nthat we're independent of optab modes here and can extract arbitrary\npieces.\n\nWith that, we can finally get rid of all special cases and rely on\ngeneric handling.  Every possible extract should be just a slidedown.\n\ngcc/ChangeLog:\n\n\t* config/riscv/autovec.md (vec_extract<mode><v_half>): Remove.\n\t(vec_extract<mode><vls_quarter>): Remove.\n\t* config/riscv/riscv-v.cc (shuffle_extract_patterns): New.\n\t(expand_vec_perm_const_1): Use it.\n\t(expand_vec_perm_const): Reject tuple modes and use OP_MODE's\n\tnumber of units.\n\t(expand_vector_subreg_extract): Remove.\n\t(legitimize_move): Don't call expand_vector_subreg_extract.\n\t* config/riscv/vector-iterators.md: Remove vec_extract-specific\n\titerators.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/subreg-extract.c: Remove xfail.",
+        "author": "Robin Dapp",
+        "timestamp": "2026-11-05T14:06:45Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/8ce5e39048138fb92ebebc4a72114d9e55fa7a91",
+        "files": [
+          "gcc/config/riscv/autovec.md",
+          "gcc/config/riscv/riscv-v.cc",
+          "gcc/config/riscv/vector-iterators.md",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/subreg-extract.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:adds",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/autovec.md",
+          "path:gcc/config/riscv/riscv-v.cc",
+          "path:gcc/config/riscv/vector-iterators.md",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/subreg-extract.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "495c38ed4c31c3c1e41c651850408fb4f5ca5f9c",
+        "title": "[RISC-V] Reorder sequence for (plus (reg) (const_int)) for nontrivial constants",
+        "body": "Another LLM finding -- more fallout from trying to fix the dhrystone regression\na couple weeks ago.  We very much want to steer PLUS operations where one\noperand is a constant through synthesize_add.  The dhrystone fix sent another\nclass of those into synthesize_add and exposed that the code it generates is\nless than ideal.\n\nBasically we generate\n\n  lui\n  addi\n  add\n\nWhen adding a large constant to a register.  The lui+add will usually fuse, so\nit's often just 2c.  When the result is used in a memory reference it's another\ncycle.\n\n  lui+addi\n  add\n  memref\n\nIt can be difficult for fold-mem-offsets to see through this in some cases.  We\ncan rewrite into\n\n  lui\n  add\n  addi\n  memref\n\nThe addi and memref will trivially fold and the lui has no incoming\ndependencies.  So practically it's going to be 2-3 cycles instead of 3 cycles.\n\nThis saves about 4b instructions in x264 input #1, so north of 2%.  Not bad.\nOf course to some degree it's just recovering a recent regression.  So it's not\nclear if it's really a net new win or just recovering what we lost.\n\nTested on riscv32-elf and riscv64-elf.  Bootstrapped on the K3 and C920.  K1 is\nin progress.  Pushing to the trunk.\n\ngcc/\n\t* config/riscv/riscv.cc (synthesize_add): Reorder instructions when we\n\tdo not find a good synthesis.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-11-04T13:49:39Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/495c38ed4c31c3c1e41c651850408fb4f5ca5f9c",
+        "files": [
+          "gcc/config/riscv/riscv.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:hardware:k3",
+          "path:gcc/config/riscv/riscv.cc",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "fa20d1603db32449ffe51e54849f6d67eb7c7965",
+        "title": "RISC-V: Support per-LMUL vector permute cost",
+        "body": "Turn the scalar permute_cost in common_vector_cost into an array indexed\nby LMUL (1, 2, 4, 8) to model non-linear permute scaling, defaulting to\nquadratic scaling ({1, 4, 16, 64}) for generic cores.\n\nIn riscv_builtin_vectorization_cost, return the baseline cost for LMUL 1.\nIn costs::adjust_stmt_cost, look up the per-LMUL permute cost for\nvec_perm.\n\nRegtested on rv64gcv, showed regressions in 4 files:\n  - gcc.target/riscv/rvv/autovec/partial/slp-{1,3,5}.c: Prefers vlseg8\n    because generic segment cost is too cheap (1).\n  - gcc.target/riscv/rvv/autovec/vls/bswap16-0.c: bswap16 is costed as\n    vec_perm, so quadratic scaling avoids large LMUL.\n\nI leave testcases untouched for now.\n  - For slp-{1,3,5}.c, will introduce a segment cost table in a separate\n    patch.\n  - For bswap16-0.c, currently we can't tell if it's a cheaper perm.\n    Robin is working on vect; once that allows us to do fine-grained\n    permute costing, this can be refined into dedicated cost tables for\n    gather/slide/compress.  After that this can be fixed.\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-protos.h (struct common_vector_cost): Change\n\tpermute_cost to array.\n\t* config/riscv/riscv-vector-costs.cc (costs::adjust_stmt_cost): Look\n\tup per-LMUL permute_cost for vec_perm.\n\t* config/riscv/riscv.cc (rvv_vls_vector_cost, rvv_vla_vector_cost)\n\t(xt_c9501_vls_vector_cost): Update permute_cost.\n\t(riscv_builtin_vectorization_cost): Return permute_cost[LMUL_1].\n\nSigned-off-by: Zhongyao Chen <chen.zhongyao@zte.com.cn>",
+        "author": "ZhongyaoChen",
+        "timestamp": "2026-11-04T08:23:39Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/fa20d1603db32449ffe51e54849f6d67eb7c7965",
+        "files": [
+          "gcc/config/riscv/riscv-protos.h",
+          "gcc/config/riscv/riscv-vector-costs.cc",
+          "gcc/config/riscv/riscv.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:introduce",
+          "functional:support",
+          "keyword:vector-crypto-hypervisor:vector",
+          "keyword:vector-crypto-hypervisor:vectorization",
+          "path:gcc/config/riscv/riscv-protos.h",
+          "path:gcc/config/riscv/riscv-vector-costs.cc",
+          "path:gcc/config/riscv/riscv.cc",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "d692d443714fd75ee70e0378f8a0db14b1dcbef6",
+        "title": "[committed][PR target/128420] Convert RISC-V define_insn_and_split to simpler define_split",
+        "body": "LLM review of x264 found a case where we had code like this:\n\n        lui     a5,%hi(tab)\n        andi    a4,a0,3\n        addi    t0,a5,%lo(tab)\n        sh2add  t1,a4,t0\n        lbu     t2,0(t1)\n        andi    a0,a0,3\n[ ... ]\n\nNote the two ANDI instructions.  They compute the same value and put it into\ntwo different places.\n\nOne is coming from a define_insn_and_split and thus we don't see it early\nenough to have any chance of optimizing it away.  Turning that pattern into a\nsimple define_split doesn't fix the problem, but it is a necessary step and it\nfits into the long term desire to avoid define_insn_and_split when we can.\n\nImplemented thusly.  Tested on riscv32-elf and riscv64-elf.  Bootstrap on K3\nand C920 in flight.  K1 is queued.  Pushing to the trunk.\n\n\tPR target/128420\ngcc/\n\t* config/riscv/bitmanip.md (andi_add.uw): Turn into define_split.",
+        "author": "JeffreyALaw",
+        "timestamp": "2026-11-04T05:15:29Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/d692d443714fd75ee70e0378f8a0db14b1dcbef6",
+        "files": [
+          "gcc/config/riscv/bitmanip.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:hardware:k3",
+          "path:gcc/config/riscv/bitmanip.md",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b88c2821e219244d18df873b0bfb344d3dc0b2a7",
+        "title": "RISC-V: Add ARC-V RPX-100 series pipeline description",
+        "body": "The RPX-100 pipeline is the same design as the RHX-100 but RV64 instead\nof RV32. This mtune is just an alias and adds 64 bit multiplication.\n\nAdd a mul_part attribute to al multiplication instructions in riscv.md\nto distinguish instructions that return the high and low part.\n\nRegtested on rv32gc, rv64gc and with rhx100 config and mtune.\n\ngcc/ChangeLog:\n\n\t* config/riscv/arcv-rhx100.md (arcv_rhx100_mpy_insn): Rename to\n\tmpy32.\n\t(arcv_rhx100_mpy32_insn): Also apply for rpx_100 tune.\n\t(arcv_rhx100_mpy64l_insn): rpx_100 mul low part.\n\t(arcv_rhx100_mpy64h_insn): rpx_100 mul high part.\n\t(arcv_rhx100_mpy*_insn): Apply bypass for both size mul.\n\t(arcv_rhx100_div_insn): Also apply for rpx_100 tune.\n\t(riscv_store_data_bypass_p): Add store bypass\n\t(arcv_rhx100_store_insn): Likewise.\n\t(arcv_rhx100_load_insn): Add load bypass.\n\t* config/riscv/riscv-cores.def (RISCV_TUNE):\n\tAdd arcv_rpx100 tune\n\t* config/riscv/riscv-opts.h (enum riscv_microarchitecture_type):\n\tAdd arcv_rpx100 microarchitecture type\n\t* config/riscv/riscv.md (low,high): Add low/high mul_part\n\tattribute, default value: low.\n\t* doc/riscv-mtune.texi: Add rpx_100 tune\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/arcv-sched-mul-mem-rpx100.c: New test.\n\nSigned-off-by: Loeka Rogge <loeka.rogge@globalfoundries.com>",
+        "author": "exur00",
+        "timestamp": "2026-11-03T18:41:47Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/b88c2821e219244d18df873b0bfb344d3dc0b2a7",
+        "files": [
+          "gcc/config/riscv/arcv-rhx100.md",
+          "gcc/config/riscv/riscv-cores.def",
+          "gcc/config/riscv/riscv-opts.h",
+          "gcc/config/riscv/riscv.md",
+          "gcc/doc/riscv-mtune.texi",
+          "gcc/testsuite/gcc.target/riscv/arcv-sched-mul-mem-rpx100.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "functional:adds",
+          "keyword:hardware:microarchitecture",
+          "keyword:hardware:tune",
+          "path:gcc/config/riscv/arcv-rhx100.md",
+          "path:gcc/config/riscv/riscv-cores.def",
+          "path:gcc/config/riscv/riscv-opts.h",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/doc/riscv-mtune.texi",
+          "path:gcc/testsuite/gcc.target/riscv/arcv-sched-mul-mem-rpx100.c",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "73225095de4c3b873841aea8a73cc14d2f067b72",
+        "title": "[RISC-V] Improve saturating truncation sequences for RISC-V when Zbb is enabled",
+        "body": "In addition to machine description scanning for bugs, I've also got LLMs\nscurrying around spec data looking for inefficient code generation issues on\nRISC-V.  This is a fix for one such finding for x264.  It saves a bit over 600m\ninstructions x264 input #1 on RISC-V.  So it's not huge, but it's not trivial\neither.\n\nWe're interested in optimizing the unsigned truncation with saturation path.\nSo if we're truncating with saturation from DI to QI we're going to end up with\na value 0..255.  We can load up the largest value in the range of the output\nmode into a register (255 in this case), then issue a umin instruction.  If the\nother input was 0..255, then we get its value, otherwise we get 255.  This\nnaturally relies of the Zbb extension.\n\nTackling in combine wasn't really feasible as we often need to see too many\ninstructions to make the transformation.  I could have tackled in isel with\nsomething conditional on a umin opcode.  But fixing the RISC-V expander was\njust too easy :-)\n\nAn implementation note.  For DI->SI we sign extend the inputs to match\nLOAD_EXTEND_OP in the hope that lets us combine the extension with the memory\nload.  Otherwise we zero extend.  Either is valid.  It's a heuristic.  I'm sure\nit's not going to be optimal somewhere.\n\nThe test verifies the full set of useful sat-trunc cases.  DI->{SI,HI,QI} and\nSI->{HI,QI}.  It checks that the optimization fires and there's run tests as\nwell.  Every case improves by at least 1 instruction.\n\nAssisted-By: Claude for discovery and testcase generation.\n\nTested on riscv32-elf and riscv64-elf.  Bootstrap & regression tested on K3 and\nc920.  Pushing to the trunk.\n\ngcc/\n\t* config/riscv/riscv.cc (riscv_expand_ustrunc): Generate umin based sequence\n\twhen Zbb is enabled.\n\ngcc/testsuite\n\t* gcc.target/riscv/ustrunc-zbb-1.c: New test.\n\t* gcc.target/riscv/ustrunc-zbb-run.c: New test.\n\t* gcc.target/riscv/ustrunc-zbb.h: New common file for ustrunc tests.",
+        "author": "Jeff Law",
+        "timestamp": "2026-11-03T16:03:53Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/73225095de4c3b873841aea8a73cc14d2f067b72",
+        "files": [
+          "gcc/config/riscv/riscv.cc",
+          "gcc/testsuite/gcc.target/riscv/ustrunc-zbb-1.c",
+          "gcc/testsuite/gcc.target/riscv/ustrunc-zbb-run.c",
+          "gcc/testsuite/gcc.target/riscv/ustrunc-zbb.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:enabled",
+          "functional:extend",
+          "functional:improve",
+          "keyword:hardware:k3",
+          "keyword:isa-extension:extension",
+          "keyword:isa-extension:zbb",
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/testsuite/gcc.target/riscv/ustrunc-zbb-1.c",
+          "path:gcc/testsuite/gcc.target/riscv/ustrunc-zbb-run.c",
+          "path:gcc/testsuite/gcc.target/riscv/ustrunc-zbb.h",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "10ae2343ac322dab390dbe6d83e14d065a381e07",
+        "title": "RISC-V: Add NEWS entries for the privileged spec deprecation",
+        "body": "Describe the deprecated privileged spec options and attributes in the\ngas, binutils and ld NEWS files.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-03T14:31:26Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/10ae2343ac322dab390dbe6d83e14d065a381e07",
+        "files": [
+          "binutils/NEWS",
+          "gas/NEWS",
+          "ld/NEWS"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "compiler-option",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:compiler-option:options",
+          "token:risc-v"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 编译选项相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "sailfishos-mirror/glibc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b941c17c0356f03946afb9c080242f89557bc0b2",
+        "title": "RISC-V: Document that PR_RISCV_V_SET_CONTROL is unsupported",
+        "body": "There's really no good way for normal userspace applications to disable\nvector: once glibc has installed an IFUNC that uses vector it doesn't\nhave a viable way to disable vector, at it's not likely anything like\nthat would ever show up.  As such the only way this sort of call would\never be viable is to construct a shim binary that handles disabling\nvector before re-loading the real traget process.  Constructing that\nbinary would be a fairly mechanical process, but it doesn't seem there's\nany interest in doing it.\n\nIf someone was to try to make that work we would still run into glibc\nissues around IFUNC probing, as we're not looking at\nPR_RISCV_V_SET_CONTROL during IFUNC resolution.  That could be fixed,\nbut it doesn't seem like anyone is all that interested in the feature.\nThere have been various discussions about deprecating\nPR_RISCV_V_SET_CONTROL in the kernel, and it seems very likely that the\nprctl() will de deprecated soon.\n\nRegardless of where things go in the kernel: we don't support\nPR_RISCV_V_SET_CONTROL in glibc, so let's just document that.\n\nReviewed-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>\nSigned-off-by: Palmer Dabbelt <palmer@dabbelt.com>\nReviewed-by: Peter Bergner <bergner@tenstorrent.com>",
+        "author": "palmer-dabbelt",
+        "timestamp": "2026-11-03T11:50:27Z",
+        "url": "https://github.com/sailfishos-mirror/glibc/commit/b941c17c0356f03946afb9c080242f89557bc0b2",
+        "files": [
+          "manual/platform.texi"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "high",
+        "matched_rules": [
+          "functional:support",
+          "keyword:vector-crypto-hypervisor:vector",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "6ef27c311e317485760a6ffc1759cde241e396de",
+        "title": "RISC-V: Adjust VLS subreg handling.",
+        "body": "Since the regmode_natural_size changes we'd spill subregs like\n (subreg:V4SI (reg:V8SI) 0)\neven though a lowpart subreg is safe in a VLA setting.\nThis is caused by a mismatch in can_change_mode_class and\nregmode_natural_size.\n\ncan_change_mode_class doesn't look at the subreg byte but would prohibit\nall such subregs because we cannot statically tell whether the inner reg\nis a register pair or a larger register.\n\nA better way is to always consider VLS vectors unsplittable but don't\nalways prohibit them in can_change_mode_class.  That way, lowpart\nsubregs are still allowed but non-lowpart subregs aren't as they won't\nbe generated in the first place.\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv.cc (riscv_can_change_mode_class): Don't\n\tprohibit ambiguous VLS subregs.\n\t(riscv_regmode_natural_size): Make VLS regs unsplittable when\n\tthe vector size is variable.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/vec-concat-1.c: Expect slides for\n\tall functions.\n\t* gcc.target/riscv/rvv/autovec/vls/extract-3.c: New test.",
+        "author": "Robin Dapp",
+        "timestamp": "2026-11-06T09:27:53Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/6ef27c311e317485760a6ffc1759cde241e396de",
+        "files": [
+          "gcc/config/riscv/riscv.cc",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/vec-concat-1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/vls/extract-3.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/vec-concat-1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/vls/extract-3.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b32f06001cf75870b76a66a4e084bbeac11fa106",
+        "title": "Change `...'-style quoting in gdb",
+        "body": "This changes spots in gdbsupport that use `...'-style quoting to use\ndouble quotes instead.  Some spots also use the `...` or the ``...''\nstyle; these are also changed.\n\nBug: https://sourceware.org/bugzilla/show_bug.cgi?id=34044",
+        "author": "tromey",
+        "timestamp": "2026-11-05T20:23:58Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/b32f06001cf75870b76a66a4e084bbeac11fa106",
+        "files": [
+          "gdb/aarch64-linux-tdep.c",
+          "gdb/ada-exp-parser.c",
+          "gdb/ada-lang.c",
+          "gdb/alpha-tdep.c",
+          "gdb/arch-utils.c",
+          "gdb/arm-linux-tdep.c",
+          "gdb/async-event.c",
+          "gdb/auto-load.c",
+          "gdb/ax-gdb.c",
+          "gdb/breakpoint.c",
+          "gdb/build-id.c",
+          "gdb/c-exp-parser.c",
+          "gdb/c-exp-parser.y",
+          "gdb/c-lang.c",
+          "gdb/charset.c",
+          "gdb/cli/cli-cmds.c",
+          "gdb/cli/cli-option.c",
+          "gdb/cli/cli-script.c",
+          "gdb/corefile.c",
+          "gdb/corelow.c",
+          "gdb/cp-namespace.c",
+          "gdb/d-exp-parser.y",
+          "gdb/darwin-nat.c",
+          "gdb/dtrace-probe.c",
+          "gdb/dwarf2/expr.c",
+          "gdb/dwarf2/index-write.c",
+          "gdb/dwarf2/line-header.c",
+          "gdb/dwarf2/loc.c",
+          "gdb/dwarf2/macro.c",
+          "gdb/eval.c",
+          "gdb/exec.c",
+          "gdb/filesystem.c",
+          "gdb/findvar.c",
+          "gdb/gdb-demangle.c",
+          "gdb/gnu-nat.c",
+          "gdb/gnu-v3-abi.c",
+          "gdb/go-exp-parser.c",
+          "gdb/go-exp-parser.y",
+          "gdb/go32-nat.c",
+          "gdb/guile/guile.c",
+          "gdb/i386-fbsd-tdep.c",
+          "gdb/i386-linux-tdep.c",
+          "gdb/i386-tdep.c",
+          "gdb/ia64-tdep.c",
+          "gdb/infcmd.c",
+          "gdb/infrun.c",
+          "gdb/interps.c",
+          "gdb/language.c",
+          "gdb/m2-lang.c",
+          "gdb/machoread.c",
+          "gdb/macrocmd.c",
+          "gdb/macroexp.c",
+          "gdb/macroscope.c",
+          "gdb/macrotab.c",
+          "gdb/main.c",
+          "gdb/maint.c",
+          "gdb/mi/mi-main.c",
+          "gdb/mips-tdep.c",
+          "gdb/objfiles.c",
+          "gdb/p-exp-parser.y",
+          "gdb/parse.c",
+          "gdb/ppc-linux-tdep.c",
+          "gdb/printcmd.c",
+          "gdb/probe.c",
+          "gdb/python/py-breakpoint.c",
+          "gdb/python/py-finishbreakpoint.c",
+          "gdb/python/py-infthread.c",
+          "gdb/python/python.c",
+          "gdb/remote-fileio.c",
+          "gdb/remote.c",
+          "gdb/riscv-tdep.c",
+          "gdb/solib-aix.c",
+          "gdb/solib-darwin.c",
+          "gdb/solib-rocm.c",
+          "gdb/solib.c",
+          "gdb/source.c",
+          "gdb/stack.c",
+          "gdb/stap-probe.c",
+          "gdb/symfile.c",
+          "gdb/symtab.c",
+          "gdb/target.c",
+          "gdb/testsuite/gdb.ada/bp_c_mixed_case.exp",
+          "gdb/testsuite/gdb.ada/catch_ex.exp",
+          "gdb/testsuite/gdb.ada/catch_ex_std.exp",
+          "gdb/testsuite/gdb.ada/excep_handle.exp",
+          "gdb/testsuite/gdb.ada/limited-length.exp",
+          "gdb/testsuite/gdb.ada/literals.exp",
+          "gdb/testsuite/gdb.ada/mi_catch_ex.exp",
+          "gdb/testsuite/gdb.ada/mi_catch_ex_hand.exp",
+          "gdb/testsuite/gdb.ada/mi_ex_cond.exp",
+          "gdb/testsuite/gdb.arch/amd64-stap-optional-prefix.exp",
+          "gdb/testsuite/gdb.arch/amd64-stap-wrong-subexp.exp",
+          "gdb/testsuite/gdb.arch/s390-multiarch.exp",
+          "gdb/testsuite/gdb.base/attach.exp",
+          "gdb/testsuite/gdb.base/break-unload-file.exp",
+          "gdb/testsuite/gdb.base/cached-source-file.exp",
+          "gdb/testsuite/gdb.base/define.exp",
+          "gdb/testsuite/gdb.base/exprs.exp",
+          "gdb/testsuite/gdb.base/gdb-index-err.exp",
+          "gdb/testsuite/gdb.base/help.exp",
+          "gdb/testsuite/gdb.base/info-macros.exp",
+          "gdb/testsuite/gdb.base/jump-inline.exp",
+          "gdb/testsuite/gdb.base/jump.exp",
+          "gdb/testsuite/gdb.base/macscp.exp",
+          "gdb/testsuite/gdb.base/maint-info-sections.exp",
+          "gdb/testsuite/gdb.base/new-ui.exp",
+          "gdb/testsuite/gdb.base/options.exp",
+          "gdb/testsuite/gdb.base/settings.exp",
+          "gdb/testsuite/gdb.base/subst.exp",
+          "gdb/testsuite/gdb.base/tls-nothreads.exp",
+          "gdb/testsuite/gdb.base/watch_thread_num.exp",
+          "gdb/testsuite/gdb.base/watchpoint.exp",
+          "gdb/testsuite/gdb.cp/maint.exp",
+          "gdb/testsuite/gdb.cp/namespace-enum.exp",
+          "gdb/testsuite/gdb.cp/overload.exp",
+          "gdb/testsuite/gdb.dlang/expression.exp",
+          "gdb/testsuite/gdb.dwarf2/macro-complaints.exp",
+          "gdb/testsuite/gdb.server/bkpt-other-inferior.exp",
+          "gdb/testsuite/gdb.server/server-exec-info.exp",
+          "gdb/testsuite/gdb.server/target-exec-file.exp",
+          "gdb/testsuite/gdb.trace/actions.exp",
+          "gdb/testsuite/lib/gdb.exp",
+          "gdb/thread.c",
+          "gdb/tracefile-tfile.c",
+          "gdb/tracefile.c",
+          "gdb/tracepoint.c",
+          "gdb/tui/tui-win.c",
+          "gdb/tui/tui-winsource.c",
+          "gdb/utils.c",
+          "gdb/valarith.c",
+          "gdb/valops.c",
+          "gdb/value.c",
+          "gdb/windows-nat.c",
+          "gdb/xml-syscall.c",
+          "gdb/z80-tdep.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:bug",
+          "path:gdb/riscv-tdep.c"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "78873c4dcee4b92347501b898f426d4302e374c0",
+        "title": "RISC-V: Remove redundant VLA niters check in better_main_loop_than_p",
+        "body": "In better_main_loop_than_p we keep the current LMUL if the loop NITERS > VF.\nBecause we try M8 first, this early exit locks in M8 before\ncompare_inside_loop_cost is called.\n\nIn pr113112-3.c (NITERS = 25) the vect dump shows:\n\n  Vector inside of loop cost: 105\n  ***** Analysis succeeded with vector mode RVVM8SI\n  ...\n  Vector inside of loop cost: 49\n  ***** Analysis succeeded with vector mode RVVMF2QI\n  Comparing two main loops (RVVMF2QI at VF 8 vs RVVM8SI at VF 8)\n  Keep current LMUL loop because known NITERS exceed the new VF\n\nBecause 25 > 8, we reject RVVMF2QI even though both have VF 8 and\nRVVMF2QI has lower inside cost.\n\nFurthermore, this check is redundant with compare_loop_overhead,\nwhich already compares estimated vector loop iterations and branch overhead.\n\nThis patch removes it and also fixes the XFAILs in pr113112-3.c.\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-vector-costs.cc (costs::better_main_loop_than_p):\n\tRemove redundant VLA niters heuristic.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.dg/vect/costmodel/riscv/rvv/pr113112-3.c: Remove XFAILs.\n\nSigned-off-by: Zhongyao Chen <chen.zhongyao@zte.com.cn>",
+        "author": "ZhongyaoChen",
+        "timestamp": "2026-11-05T12:06:22Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/78873c4dcee4b92347501b898f426d4302e374c0",
+        "files": [
+          "gcc/config/riscv/riscv-vector-costs.cc",
+          "gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/pr113112-3.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fixes",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/riscv-vector-costs.cc",
+          "path:gcc/testsuite/gcc.dg/vect/costmodel/riscv/rvv/pr113112-3.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "b95850f0c0df9e90f7a5bad61f76627bff5501c9",
+        "title": "RISC-V: Fix reg overlap for vs1 of the widening float reduction",
+        "body": "Like the widening integer reduction, the vs1 of the widening float\nreduction (aka vfwredosum.vs and vfwredusum.vs) is read with\nEEW = 2 * SEW while the vs2 is read with EEW = SEW.  The section 5.2\nof the vector spec reserves any encoding in which one vector register\nsupplies source operands with two or more different EEWs.  Thus, the\nvs1 must not fall inside the vs2 register group, but we may have below\nasm dump when the vs1 comes from the vs2 register group.\n\n  vfwredosum.vs v4,v4,v5\n\nTake the Wn3 constraint for the operand 4 (aka vs1) of the widening\nfloat reduction.  See below issue of the riscv-isa-manual for more\ndetails.\n\n  https://github.com/riscv/riscv-isa-manual/issues/2350\n\ngcc/ChangeLog:\n\n\t* config/riscv/vector.md: Take the Wn3 constraint for the\n\toperand 4 of the widening float reduction.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-04T06:15:40Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/b95850f0c0df9e90f7a5bad61f76627bff5501c9",
+        "files": [
+          "gcc/config/riscv/vector.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/vector.md",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "2394c2445caa44e30dd58f0b08d7a6a5cc2c33da",
+        "title": "RISC-V: Ignore the deprecated privileged spec attributes",
+        "body": "The RISC-V psABI has deprecated Tag_RISCV_priv_spec,\nTag_RISCV_priv_spec_minor and Tag_RISCV_priv_spec_revision.\n\nThe assembler no longer emits them when CSR or privileged instructions\nare used, so riscv_is_priv_insn and explicit_priv_attr are removed.\n\nThe linker ignores them in the input and does not output them, so the\n1.9.1 conflict warning is gone too.  The attr-merge-priv-spec tests are\nreduced to one test that checks the attributes are dropped, and the gas\ntests that checked the emitted attributes are removed or updated.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-03T14:31:16Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/2394c2445caa44e30dd58f0b08d7a6a5cc2c33da",
+        "files": [
+          "bfd/elfxx-riscv.c",
+          "gas/config/tc-riscv.c",
+          "gas/doc/c-riscv.texi",
+          "gas/testsuite/gas/riscv/attribute-11.d",
+          "gas/testsuite/gas/riscv/attribute-11.s",
+          "gas/testsuite/gas/riscv/attribute-12.d",
+          "gas/testsuite/gas/riscv/attribute-14.s",
+          "gas/testsuite/gas/riscv/attribute-14a.d",
+          "gas/testsuite/gas/riscv/attribute-14b.d",
+          "gas/testsuite/gas/riscv/attribute-14c.d",
+          "gas/testsuite/gas/riscv/attribute-14d.d",
+          "gas/testsuite/gas/riscv/attribute-15.d",
+          "gas/testsuite/gas/riscv/attribute-16.d",
+          "gas/testsuite/gas/riscv/attribute-priv-ignored.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-01.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-02.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-03.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-b.s",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-d.s",
+          "ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "profile-abi",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:profile-abi:psabi",
+          "path:bfd/elfxx-riscv.c",
+          "path:gas/config/tc-riscv.c",
+          "path:gas/doc/c-riscv.texi",
+          "path:gas/testsuite/gas/riscv/attribute-11.d",
+          "path:gas/testsuite/gas/riscv/attribute-11.s",
+          "path:gas/testsuite/gas/riscv/attribute-12.d",
+          "path:gas/testsuite/gas/riscv/attribute-14.s",
+          "path:gas/testsuite/gas/riscv/attribute-14a.d",
+          "path:gas/testsuite/gas/riscv/attribute-14b.d",
+          "path:gas/testsuite/gas/riscv/attribute-14c.d",
+          "path:gas/testsuite/gas/riscv/attribute-14d.d",
+          "path:gas/testsuite/gas/riscv/attribute-15.d",
+          "path:gas/testsuite/gas/riscv/attribute-16.d",
+          "path:gas/testsuite/gas/riscv/attribute-priv-ignored.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-01.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-02.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-03.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-b.s",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-d.s",
+          "path:ld/testsuite/ld-riscv-elf/ld-riscv-elf.exp",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V Profile 或 ABI相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "57327e464212915d9bfc0d8d2ec587d201895c27",
+        "title": "RISC-V: Remove the privileged spec classes",
+        "body": "The privileged spec is always 1.13 now, and no remaining CSR depends on\nthe privileged spec version.  So remove PRIV_SPEC_CLASS_*, the\nriscv_priv_specs table and riscv_get_priv_spec_class_from_numbers.\n\nDECLARE_CSR and DECLARE_CSR_ALIAS no longer take the define and abort\nversions, so update all their users, including gdb and binutils/dwarf.c.\n\nThe assembler drops the version check of the CSRs and default_priv_spec.\nThe disassembler accepts any value for the deprecated priv-spec option.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-03T14:31:16Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/57327e464212915d9bfc0d8d2ec587d201895c27",
+        "files": [
+          "bfd/cpu-riscv.c",
+          "bfd/cpu-riscv.h",
+          "binutils/dwarf.c",
+          "gas/config/tc-riscv.c",
+          "gdb/riscv-tdep.c",
+          "gdb/riscv-tdep.h",
+          "include/opcode/riscv-opc.h",
+          "opcodes/riscv-dis.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "compiler-option",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:compiler-option:option",
+          "path:bfd/cpu-riscv.c",
+          "path:bfd/cpu-riscv.h",
+          "path:gas/config/tc-riscv.c",
+          "path:gdb/riscv-tdep.c",
+          "path:gdb/riscv-tdep.h",
+          "path:include/opcode/riscv-opc.h",
+          "path:opcodes/riscv-dis.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 编译选项相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "22eaa6766f849ae888800454a9c191cde1583d90",
+        "title": "RISC-V: Deprecate the privileged spec version selection",
+        "body": "Since the 1.9.1 support was removed, no CSR number depends on the\nprivileged spec version, so selecting a version does not change the\ngenerated code.  Always use the privileged spec 1.13:\n\n* -mpriv-spec and --with-priv-spec only warn that they are deprecated\n  and have no effect.\n\n* The privileged ELF attributes set by .attribute are warned about and\n  dropped.\n\n* objdump -M priv-spec only warns, and the privileged ELF attributes are\n  no longer read.\n\nUsers who need another version should use binutils 2.47 or earlier.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-03T14:31:06Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/22eaa6766f849ae888800454a9c191cde1583d90",
+        "files": [
+          "binutils/doc/binutils.texi",
+          "gas/config.in",
+          "gas/config/tc-riscv.c",
+          "gas/configure",
+          "gas/configure.ac",
+          "gas/doc/c-riscv.texi",
+          "gas/testsuite/gas/riscv/attribute-05.d",
+          "gas/testsuite/gas/riscv/attribute-05.l",
+          "gas/testsuite/gas/riscv/attribute-12.d",
+          "gas/testsuite/gas/riscv/attribute-13.d",
+          "gas/testsuite/gas/riscv/attribute-15.d",
+          "gas/testsuite/gas/riscv/attribute-16.d",
+          "gas/testsuite/gas/riscv/attribute-priv-ignored.d",
+          "gas/testsuite/gas/riscv/attribute-priv-ignored.l",
+          "gas/testsuite/gas/riscv/attribute-priv-ignored.s",
+          "gas/testsuite/gas/riscv/csr-dw-regnums.d",
+          "gas/testsuite/gas/riscv/csr-dw-regnums.s",
+          "gas/testsuite/gas/riscv/csr-insns-pseudo-noalias.d",
+          "gas/testsuite/gas/riscv/csr-insns-pseudo-zfinx.d",
+          "gas/testsuite/gas/riscv/csr-insns-pseudo.d",
+          "gas/testsuite/gas/riscv/csr-insns-pseudo.s",
+          "gas/testsuite/gas/riscv/csr-insns-read-only.d",
+          "gas/testsuite/gas/riscv/csr-insns-read-only.s",
+          "gas/testsuite/gas/riscv/csr-version-1p10.d",
+          "gas/testsuite/gas/riscv/csr-version-1p10.l",
+          "gas/testsuite/gas/riscv/csr-version-1p11.d",
+          "gas/testsuite/gas/riscv/csr-version-1p11.l",
+          "gas/testsuite/gas/riscv/csr-version-1p12.d",
+          "gas/testsuite/gas/riscv/csr-version-1p12.l",
+          "gas/testsuite/gas/riscv/csr-version-1p13.d",
+          "gas/testsuite/gas/riscv/csr-version-1p13.l",
+          "gas/testsuite/gas/riscv/csr.d",
+          "gas/testsuite/gas/riscv/csr.l",
+          "gas/testsuite/gas/riscv/csr.s",
+          "gas/testsuite/gas/riscv/imply-zicsr-zifencei-i2p1-misa-spec-20191213.d",
+          "gas/testsuite/gas/riscv/imply-zicsr-zifencei.s",
+          "gas/testsuite/gas/riscv/priv-spec-deprecated.l",
+          "gas/testsuite/gas/riscv/spmpen-rv32.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-01.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-02.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-03.d",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-a.s",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-b.s",
+          "ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-c.s",
+          "opcodes/riscv-dis.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gas/config/tc-riscv.c",
+          "path:gas/doc/c-riscv.texi",
+          "path:gas/testsuite/gas/riscv/attribute-05.d",
+          "path:gas/testsuite/gas/riscv/attribute-05.l",
+          "path:gas/testsuite/gas/riscv/attribute-12.d",
+          "path:gas/testsuite/gas/riscv/attribute-13.d",
+          "path:gas/testsuite/gas/riscv/attribute-15.d",
+          "path:gas/testsuite/gas/riscv/attribute-16.d",
+          "path:gas/testsuite/gas/riscv/attribute-priv-ignored.d",
+          "path:gas/testsuite/gas/riscv/attribute-priv-ignored.l",
+          "path:gas/testsuite/gas/riscv/attribute-priv-ignored.s",
+          "path:gas/testsuite/gas/riscv/csr-dw-regnums.d",
+          "path:gas/testsuite/gas/riscv/csr-dw-regnums.s",
+          "path:gas/testsuite/gas/riscv/csr-insns-pseudo-noalias.d",
+          "path:gas/testsuite/gas/riscv/csr-insns-pseudo-zfinx.d",
+          "path:gas/testsuite/gas/riscv/csr-insns-pseudo.d",
+          "path:gas/testsuite/gas/riscv/csr-insns-pseudo.s",
+          "path:gas/testsuite/gas/riscv/csr-insns-read-only.d",
+          "path:gas/testsuite/gas/riscv/csr-insns-read-only.s",
+          "path:gas/testsuite/gas/riscv/csr-version-1p10.d",
+          "path:gas/testsuite/gas/riscv/csr-version-1p10.l",
+          "path:gas/testsuite/gas/riscv/csr-version-1p11.d",
+          "path:gas/testsuite/gas/riscv/csr-version-1p11.l",
+          "path:gas/testsuite/gas/riscv/csr-version-1p12.d",
+          "path:gas/testsuite/gas/riscv/csr-version-1p12.l",
+          "path:gas/testsuite/gas/riscv/csr-version-1p13.d",
+          "path:gas/testsuite/gas/riscv/csr-version-1p13.l",
+          "path:gas/testsuite/gas/riscv/csr.d",
+          "path:gas/testsuite/gas/riscv/csr.l",
+          "path:gas/testsuite/gas/riscv/csr.s",
+          "path:gas/testsuite/gas/riscv/imply-zicsr-zifencei-i2p1-misa-spec-20191213.d",
+          "path:gas/testsuite/gas/riscv/imply-zicsr-zifencei.s",
+          "path:gas/testsuite/gas/riscv/priv-spec-deprecated.l",
+          "path:gas/testsuite/gas/riscv/spmpen-rv32.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-01.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-02.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-03.d",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-a.s",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-b.s",
+          "path:ld/testsuite/ld-riscv-elf/attr-merge-priv-spec-c.s",
+          "path:opcodes/riscv-dis.c",
+          "token:risc-v"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "62766e1b169d6d4f6fbd14697c66947a07b84dee",
+        "title": "RISC-V: Remove the N extension CSRs",
+        "body": "The N extension CSRs (ustatus, uie, utvec, uscratch, uepc, ucause,\nutval, uip, sedeleg and sideleg) were removed in the privileged spec\n1.12.  Now that the privileged spec is always 1.13, they are never\nvalid, so remove them.\n\nThe assembler now reports them as unknown CSRs.  The disassembler\nalready printed their numbers instead of their names.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-03T14:31:06Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/62766e1b169d6d4f6fbd14697c66947a07b84dee",
+        "files": [
+          "include/opcode/riscv-opc.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "isa-extension",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:isa-extension:extension",
+          "path:include/opcode/riscv-opc.h",
+          "token:risc-v"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V ISA 扩展相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "78a34222c6368cfab3e750427f8354a3176e4d6d",
+        "title": "Use add_reg_note instead of a hand-built note",
+        "body": "gcc/ChangeLog:\n\n\t* config/arm/arm.cc (arm_emit_multi_reg_pop, arm_emit_ldrd_pop,\n\tarm_expand_epilogue): Use add_reg_note.\n\t* config/cris/cris.cc (cris_split_movdx, cris_expand_epilogue): Likewise.\n\t* config/frv/frv.cc (frv_frame_insn): Likewise.\n\t* config/loongarch/loongarch.cc (loongarch_set_frame_expr,\n\tloongarch_restore_reg): Likewise.\n\t* config/riscv/riscv.cc (riscv_set_frame_expr): Likewise.\n\t* config/stormy16/stormy16.cc (xstormy16_split_move): Likewise.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:32Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/78a34222c6368cfab3e750427f8354a3176e4d6d",
+        "files": [
+          "gcc/config/arm/arm.cc",
+          "gcc/config/cris/cris.cc",
+          "gcc/config/frv/frv.cc",
+          "gcc/config/loongarch/loongarch.cc",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/stormy16/stormy16.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "043a79ac094e4c5078d12b22dc6a38ab624b1fbb",
+        "title": "Use rtx_insn * and rtx_code_label * where the value already has that type",
+        "body": "gcc/ChangeLog:\n\n\t* config/aarch64/aarch64.cc (aarch64_guard_switch_pstate_sm,\n\taarch64_expand_prologue, aarch64_expand_epilogue,\n\taarch64_switch_pstate_sm_for_landing_pad,\n\taarch64_switch_pstate_sm_for_jump,\n\taarch64_switch_pstate_sm_for_call): Use an rtx_code_label *\n\tfor the guard label.\n\t(aarch64_expand_cpymem): Use an rtx_insn * for locals that only\n\thold an insn.\n\t* config/arm/arm.cc (arm_add_cfa_adjust_cfa_note,\n\tcmse_nonsecure_call_inline_register_clear): Pass an rtx_insn *\n\tand use one for a local that already holds an insn.\n\t* config/bfin/bfin.cc (hwloop_optimize): Use an rtx_insn * for a\n\tlocal that only holds an insn.\n\t* config/c6x/c6x.cc (condjump_opposite_condition, duplicate_cond,\n\treorg_emit_nops, try_rename_operands, hwloop_optimize): Pass an\n\trtx_insn * and use one for a local that already holds an insn.\n\t* explow.cc (emit_stack_clash_protection_probe_loop_start,\n\tanti_adjust_stack_and_probe_stack_clash): Pass an\n\trtx_code_label ** and use one for a local that only holds a\n\tlabel.\n\t* explow.h (emit_stack_clash_protection_probe_loop_start): Pass\n\tan rtx_code_label **.\n\t* haifa-sched.cc (move_insn): Pass an rtx_insn *.\n\t* optabs.cc (expand_compare_and_swap_loop): Likewise.\n\t(maybe_emit_compare_and_swap_exchange_loop): Pass nullptr.\n\t* config/i386/i386-features.cc (emit_conversion_insns): Pass an\n\trtx_insn *.\n\t* config/i386/i386-features.h (emit_conversion_insns): Likewise.\n\t* config/ia64/ia64.cc (get_insn_spec_code, try_issue_insn):\n\tLikewise.\n\t* config/m68k/m68k.md (negdf2, negxf2, absdf2, absxf2): Use an\n\trtx_insn * for a local that only holds an insn.\n\t* config/mips/mips.cc (mips_expand_prologue): Use an rtx_insn *\n\tfor a local that only holds an insn.\n\t* config/pru/pru.md (cbranchdi4): Likewise.\n\t* config/riscv/riscv-string.cc (emit_strcmp_scalar_compare_byte,\n\temit_strcmp_scalar_compare_subword,\n\temit_strcmp_scalar_compare_word,\n\temit_strcmp_scalar_load_and_compare,\n\temit_memcmp_scalar_load_and_compare): Pass an rtx_code_label *.\n\t* config/rl78/rl78.cc (rl78_note_reg_uses, rl78_note_reg_set):\n\tPass an rtx_insn *.\n\t* config/rs6000/rs6000-p8swap.cc (union_defs, union_uses,\n\tinsn_is_load_p, insn_is_store_p, insn_is_swap_p,\n\tquad_aligned_load_p, quad_aligned_store_p,\n\tswap_feeds_both_load_and_store, const_load_sequence_p,\n\tinsn_is_swappable_p, chain_contains_only_swaps,\n\tmark_swaps_for_removal, replace_swapped_aligned_load,\n\treplace_swapped_load_constant, rs6000_analyze_swaps): Pass an\n\trtx_insn * and use one for locals that already hold an insn.\n\t* config/rs6000/rs6000.cc (is_load_insn, is_store_insn,\n\trs6000_is_costly_dependence, is_costly_group): Likewise.\n\t* config/rs6000/rs6000-string.cc (do_ifelse,\n\texpand_cmp_vec_sequence, expand_strncmp_gpr_sequence,\n\texpand_block_compare, expand_strn_compare): Pass an\n\trtx_code_label * and use one for locals that only hold a\n\tlabel.\n\t* config/rs6000/rs6000.md (allocate_stack): Use an\n\trtx_code_label * for a local that only holds a label.\n\t* config/s390/s390.cc (s390_emit_tls_call_insn,\n\ts390_expand_tbegin): Use an rtx_insn * for a local that only\n\tholds an insn.\n\t* config/sh/sh.cc (sh_expand_prologue, sh_reorg): Use an\n\trtx_code_label * for a local that only holds a label.\n\t* config/sh/sh.md (symGOT2reg, symGOTFUNCDESC2reg,\n\tsibcall_pcrel_fdpic, sibcall_value_pcrel,\n\tsibcall_value_pcrel_fdpic): Use an rtx_insn * for a local that\n\tonly holds an insn.\n\t* config/sh/sh_treg_combine.cc (touched_insn,\n\ttry_combine_comparisons): Pass and return an rtx_insn *, and\n\tuse one for a local that already holds an insn.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:30Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/043a79ac094e4c5078d12b22dc6a38ab624b1fbb",
+        "files": [
+          "gcc/config/aarch64/aarch64.cc",
+          "gcc/config/arm/arm.cc",
+          "gcc/config/bfin/bfin.cc",
+          "gcc/config/c6x/c6x.cc",
+          "gcc/config/i386/i386-features.cc",
+          "gcc/config/i386/i386-features.h",
+          "gcc/config/ia64/ia64.cc",
+          "gcc/config/m68k/m68k.md",
+          "gcc/config/mips/mips.cc",
+          "gcc/config/pru/pru.md",
+          "gcc/config/riscv/riscv-string.cc",
+          "gcc/config/rl78/rl78.cc",
+          "gcc/config/rs6000/rs6000-p8swap.cc",
+          "gcc/config/rs6000/rs6000-string.cc",
+          "gcc/config/rs6000/rs6000.cc",
+          "gcc/config/rs6000/rs6000.md",
+          "gcc/config/s390/s390.cc",
+          "gcc/config/sh/sh.cc",
+          "gcc/config/sh/sh.md",
+          "gcc/config/sh/sh_treg_combine.cc",
+          "gcc/explow.cc",
+          "gcc/explow.h",
+          "gcc/haifa-sched.cc",
+          "gcc/optabs.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv-string.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "fa8d8dfca73ee82720c90a9daad5c573fc2a3c8f",
+        "title": "Hold emitted insns in rtx_insn * locals",
+        "body": "gcc/ChangeLog:\n\n\t* config/arc/arc.cc (arc_save_callee_enter,\n\tarc_save_callee_milli): Hold the emitted insn in an rtx_insn *.\n\t* config/arm/arm.cc (arm_emit_multi_reg_pop): Likewise.\n\t* config/msp430/msp430.cc (F, msp430_expand_prologue,\n\tmsp430_expand_epilogue): Likewise.\n\t* config/riscv/riscv.cc (riscv_v_adjust_scalable_frame,\n\triscv_allocate_and_probe_stack_space): Likewise.\n\t* config/rl78/rl78.cc (F, rl78_expand_prologue): Likewise.\n\t* config/s390/s390.cc (s390_emit_epilogue): Likewise.\n\t* config/sh/sh_treg_combine.cc (try_combine_comparisons):\n\tLikewise.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:29Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/fa8d8dfca73ee82720c90a9daad5c573fc2a3c8f",
+        "files": [
+          "gcc/config/arc/arc.cc",
+          "gcc/config/arm/arm.cc",
+          "gcc/config/msp430/msp430.cc",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/rl78/rl78.cc",
+          "gcc/config/s390/s390.cc",
+          "gcc/config/sh/sh_treg_combine.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "5f9900ec00fcaa7a44d8bdc69b77c8be5b18012e",
+        "title": "Use rtx_insn * for locals set from insn returns",
+        "body": "gcc/ChangeLog:\n\n\t* compare-elim.cc (try_merge_compare): Use rtx_insn * for a local\n\tset from a function that returns an insn.\n\t* config/alpha/alpha.md (reload_out<mode>_safe_bwa,\n\treload_out<mode>_aligned): Likewise.\n\t* config/arc/arc.cc (frame_restore_reg, arc_restore_callee_saves,\n\tarc_restore_callee_milli): Likewise.\n\t* config/arm/arm.cc (arm_expand_prologue): Likewise.\n\t* config/cris/cris.cc (cris_expand_prologue): Likewise.\n\t* config/lm32/lm32.cc (expand_save_restore, stack_adjust,\n\tlm32_expand_prologue): Likewise.\n\t* config/loongarch/loongarch.cc (loongarch_restore_reg): Likewise.\n\t* config/riscv/riscv.cc (riscv_restore_reg): Likewise.\n\t* config/s390/s390.cc (s390_emit_prologue): Likewise.\n\t* config/sh/sh_treg_combine.cc (try_combine_comparisons): Likewise.\n\t* config/stormy16/stormy16.cc (xstormy16_expand_prologue): Likewise.\n\t* config/visium/visium.cc (visium_save_regs, visium_expand_prologue,\n\tvisium_restore_regs, visium_expand_epilogue): Likewise.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:27Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/5f9900ec00fcaa7a44d8bdc69b77c8be5b18012e",
+        "files": [
+          "gcc/compare-elim.cc",
+          "gcc/config/alpha/alpha.md",
+          "gcc/config/arc/arc.cc",
+          "gcc/config/arm/arm.cc",
+          "gcc/config/cris/cris.cc",
+          "gcc/config/lm32/lm32.cc",
+          "gcc/config/loongarch/loongarch.cc",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/s390/s390.cc",
+          "gcc/config/sh/sh_treg_combine.cc",
+          "gcc/config/stormy16/stormy16.cc",
+          "gcc/config/visium/visium.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "f1c2610b7bbba75c7f8cdff7b347f20aa7966960",
+        "title": "Use rtx_insn * for returns that are already an insn",
+        "body": "gcc/ChangeLog:\n\n\t* compare-elim.cc (try_validate_parallel): Return an rtx_insn *.\n\t* config/aarch64/aarch64.cc (aarch64_emit_move): Likewise.\n\t* config/alpha/alpha-protos.h (alpha_emit_unlikely_jump): Likewise.\n\t* config/alpha/alpha.cc (alpha_emit_unlikely_jump): Likewise.\n\t* config/arc/arc.cc (frame_insn, frame_move, frame_move_inc,\n\tframe_add, frame_stack_add): Likewise.\n\t* config/arm/arm.cc (emit_multi_reg_push): Likewise.\n\t* config/cris/cris-protos.h (cris_split_movdx,\n\tcris_emit_movem_store): Likewise.\n\t* config/cris/cris.cc (cris_split_movdx, cris_emit_movem_store):\n\tLikewise.\n\t* config/csky/csky.cc (emit_csky_regs_push): Likewise.\n\t* config/fr30/fr30-protos.h (fr30_move_double): Likewise.\n\t* config/fr30/fr30.cc (fr30_move_double): Likewise.\n\t* config/frv/frv-protos.h (frv_split_scc, frv_split_cond_move,\n\tfrv_split_minmax, frv_split_abs): Likewise.\n\t* config/frv/frv.cc (frv_split_scc, frv_split_cond_move,\n\tfrv_split_minmax, frv_split_abs): Likewise.\n\t* config/h8300/h8300.cc (push, pop): Likewise.\n\t* config/i386/i386.cc (pro_epilogue_adjust_stack): Likewise.\n\t* config/lm32/lm32.cc (emit_add): Likewise.\n\t* config/loongarch/loongarch-protos.h (loongarch_emit_move):\n\tLikewise.\n\t* config/loongarch/loongarch.cc (loongarch_emit_move): Likewise.\n\t* config/m32r/m32r-protos.h (gen_split_move_double): Likewise.\n\t* config/m32r/m32r.cc (gen_split_move_double): Likewise.\n\t* config/pru/pru.cc (pru_add3_frame_adjust, pru_add_to_sp):\n\tLikewise.\n\t* config/riscv/riscv-protos.h (riscv_emit_move): Likewise.\n\t* config/riscv/riscv.cc (riscv_emit_move): Likewise.\n\t* config/rs6000/rs6000-logue.cc (rs6000_emit_stack_reset): Likewise.\n\t* config/s390/s390.cc (save_fpr, restore_fpr,\n\ts390_prologue_plus_offset): Likewise.\n\t* config/sh/sh.cc (push, emit_load_ptr): Likewise.\n\t* config/sh/sh_treg_combine.cc (make_not_reg_insn): Likewise.\n\t* config/stormy16/stormy16.cc (emit_addhi3_postreload): Likewise.\n\t* config/visium/visium.cc (emit_frame_insn): Likewise.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:27Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/f1c2610b7bbba75c7f8cdff7b347f20aa7966960",
+        "files": [
+          "gcc/compare-elim.cc",
+          "gcc/config/aarch64/aarch64.cc",
+          "gcc/config/alpha/alpha-protos.h",
+          "gcc/config/alpha/alpha.cc",
+          "gcc/config/arc/arc.cc",
+          "gcc/config/arm/arm.cc",
+          "gcc/config/cris/cris-protos.h",
+          "gcc/config/cris/cris.cc",
+          "gcc/config/csky/csky.cc",
+          "gcc/config/fr30/fr30-protos.h",
+          "gcc/config/fr30/fr30.cc",
+          "gcc/config/frv/frv-protos.h",
+          "gcc/config/frv/frv.cc",
+          "gcc/config/h8300/h8300.cc",
+          "gcc/config/i386/i386.cc",
+          "gcc/config/lm32/lm32.cc",
+          "gcc/config/loongarch/loongarch-protos.h",
+          "gcc/config/loongarch/loongarch.cc",
+          "gcc/config/m32r/m32r-protos.h",
+          "gcc/config/m32r/m32r.cc",
+          "gcc/config/pru/pru.cc",
+          "gcc/config/riscv/riscv-protos.h",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/rs6000/rs6000-logue.cc",
+          "gcc/config/s390/s390.cc",
+          "gcc/config/sh/sh.cc",
+          "gcc/config/sh/sh_treg_combine.cc",
+          "gcc/config/stormy16/stormy16.cc",
+          "gcc/config/visium/visium.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv-protos.h",
+          "path:gcc/config/riscv/riscv.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "2df90e844e1ad833ac336ccedd4c30472b22f345",
+        "title": "Use rtx_insn * for locals that already hold an insn",
+        "body": "gcc/ChangeLog:\n\n\t* config/aarch64/aarch64.cc (aarch64_pushwb_single_reg, aarch64_expand_epilogue):\n\tUse rtx_insn * for locals that already hold an insn.\n\t* config/alpha/alpha.cc (alpha_expand_prologue, alpha_expand_epilogue): Likewise.\n\t* config/arc/arc.cc (arc_dwarf_emit_irq_save_regs, push_reg, pop_reg, arc_expand_epilogue,\n\thwloop_fail): Likewise.\n\t* config/arm/arm.cc (cmse_clear_registers, arm_emit_call_insn, thumb2_emit_strd_push,\n\tthumb_set_frame_pointer): Likewise.\n\t* config/bfin/bfin.cc (hwloop_optimize, hwloop_fail): Likewise.\n\t* config/c6x/c6x.cc (reorg_emit_nops): Likewise.\n\t* config/cris/cris.cc (cris_split_movdx, cris_expand_epilogue,\n\tcris_emit_movem_store): Likewise.\n\t* config/cris/cris.md (movdi): Likewise.\n\t* config/csky/csky.cc (get_csky_barrier_cost, csky_expand_prologue): Likewise.\n\t* config/fr30/fr30.cc (fr30_expand_prologue, fr30_move_double): Likewise.\n\t* config/frv/frv.cc (frv_frame_insn, frv_split_scc, frv_split_cond_move, frv_split_minmax,\n\tfrv_split_abs): Likewise.\n\t* config/ft32/ft32.cc (ft32_expand_prologue): Likewise.\n\t* config/gcn/gcn.cc (move_callee_saved_registers, gcn_expand_prologue): Likewise.\n\t* config/ia64/ia64.cc (ia64_split_tmode_move): Likewise.\n\t* config/lm32/lm32.cc (emit_add): Likewise.\n\t* config/loongarch/loongarch.cc (loongarch_set_frame_expr,\n\tloongarch_expand_epilogue): Likewise.\n\t* config/loongarch/loongarch.md (sibcall, sibcall_value): Likewise.\n\t* config/m32r/m32r.cc (gen_split_move_double, pop): Likewise.\n\t* config/mmix/mmix.cc (mmix_expand_prologue, mmix_emit_sp_add): Likewise.\n\t* config/moxie/moxie.cc (moxie_expand_prologue): Likewise.\n\t* config/nds32/nds32-md-auxiliary.cc (nds32_emit_push_fpr_callee_saved,\n\tnds32_emit_pop_fpr_callee_saved, nds32_emit_v3pop_fpr_callee_saved,\n\tnds32_legitimize_tls_address): Likewise.\n\t* config/nds32/nds32.cc (nds32_expand_epilogue): Likewise.\n\t* config/nds32/nds32.md (call, call_value): Likewise.\n\t* config/nvptx/nvptx.cc (nvptx_propagate): Likewise.\n\t* config/or1k/or1k.cc (or1k_save_reg, or1k_expand_prologue, or1k_expand_epilogue): Likewise.\n\t* config/pru/pru.cc (pru_add3_frame_adjust): Likewise.\n\t* config/pru/pru.md (insv<mode>, lshrdi3, ashldi3): Likewise.\n\t* config/riscv/riscv.cc (riscv_set_frame_expr, riscv_for_each_saved_v_reg,\n\triscv_gen_multi_pop_insn, riscv_expand_epilogue): Likewise.\n\t* config/riscv/thead.cc (th_mempair_save_regs, th_mempair_restore_regs): Likewise.\n\t* config/rs6000/rs6000-logue.cc (rs6000_emit_prologue, restore_saved_cr): Likewise.\n\t* config/rs6000/rs6000-string.cc (expand_block_compare_gpr, expand_strncmp_gpr_sequence,\n\texpand_strn_compare): Likewise.\n\t* config/rx/rx.cc (gen_safe_add, push_regs): Likewise.\n\t* config/s390/s390.cc (save_fpr): Likewise.\n\t* config/sh/sh.cc (sh_reorg): Likewise.\n\t* config/sh/sh_treg_combine.cc (trace_reg_uses_1): Likewise.\n\t* config/sparc/sparc.cc (empty_delay_slot, sparc_output_mi_thunk): Likewise.\n\t* config/stormy16/stormy16.cc (xstormy16_split_move, emit_addhi3_postreload): Likewise.\n\t* config/v850/v850.cc (expand_prologue, expand_epilogue): Likewise.\n\t* config/vax/vax.cc (vax_expand_prologue): Likewise.\n\t* config/visium/visium.cc (empty_delay_slot): Likewise.\n\t* config/xtensa/xtensa.cc (xtensa_copy_incoming_a7, xtensa_set_return_address): Likewise.\n\t* final.cc (shorten_branches): Likewise.\n\t* reorg.cc (try_merge_delay_insns, fill_slots_from_thread, make_return_insns): Likewise.\n\t* tree-outof-ssa.cc (insert_value_copy_on_edge): Likewise.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:26Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/2df90e844e1ad833ac336ccedd4c30472b22f345",
+        "files": [
+          "gcc/config/aarch64/aarch64.cc",
+          "gcc/config/alpha/alpha.cc",
+          "gcc/config/arc/arc.cc",
+          "gcc/config/arm/arm.cc",
+          "gcc/config/bfin/bfin.cc",
+          "gcc/config/c6x/c6x.cc",
+          "gcc/config/cris/cris.cc",
+          "gcc/config/cris/cris.md",
+          "gcc/config/csky/csky.cc",
+          "gcc/config/fr30/fr30.cc",
+          "gcc/config/frv/frv.cc",
+          "gcc/config/ft32/ft32.cc",
+          "gcc/config/gcn/gcn.cc",
+          "gcc/config/ia64/ia64.cc",
+          "gcc/config/lm32/lm32.cc",
+          "gcc/config/loongarch/loongarch.cc",
+          "gcc/config/loongarch/loongarch.md",
+          "gcc/config/m32r/m32r.cc",
+          "gcc/config/mmix/mmix.cc",
+          "gcc/config/moxie/moxie.cc",
+          "gcc/config/nds32/nds32-md-auxiliary.cc",
+          "gcc/config/nds32/nds32.cc",
+          "gcc/config/nds32/nds32.md",
+          "gcc/config/nvptx/nvptx.cc",
+          "gcc/config/or1k/or1k.cc",
+          "gcc/config/pru/pru.cc",
+          "gcc/config/pru/pru.md",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/riscv/thead.cc",
+          "gcc/config/rs6000/rs6000-logue.cc",
+          "gcc/config/rs6000/rs6000-string.cc",
+          "gcc/config/rx/rx.cc",
+          "gcc/config/s390/s390.cc",
+          "gcc/config/sh/sh.cc",
+          "gcc/config/sh/sh_treg_combine.cc",
+          "gcc/config/sparc/sparc.cc",
+          "gcc/config/stormy16/stormy16.cc",
+          "gcc/config/v850/v850.cc",
+          "gcc/config/vax/vax.cc",
+          "gcc/config/visium/visium.cc",
+          "gcc/config/xtensa/xtensa.cc",
+          "gcc/final.cc",
+          "gcc/reorg.cc",
+          "gcc/tree-outof-ssa.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/config/riscv/thead.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "cea82e41d3db61fbd0d181d113967b83ed69070c",
+        "title": "Use rtx_code_label * for locals set by gen_label_rtx",
+        "body": "gcc/ChangeLog:\n\n\t* calls.cc (prepare_call_address): Use rtx_code_label * for a\n\tlocal set only by gen_label_rtx.\n\t* config/aarch64/aarch64.cc (aarch64_expand_fp_spaceship):\n\tLikewise.\n\t* config/alpha/alpha.cc (alpha_emit_floatuns): Likewise.\n\t* config/alpha/alpha.md (@reload_out<mode>_safe_bwa,\n\treload_out<mode>_aligned): Likewise.\n\t* config/arc/arc.cc (arc_expand_compare_and_swap_qh,\n\tarc_split_compare_and_swap, hwloop_optimize): Likewise.\n\t* config/avr/avr.cc (avr_emit_skip_clear, avr_emit_skip_pixop):\n\tLikewise.\n\t* config/avr/avr.md (flash_segment): Likewise.\n\t* config/bfin/bfin.cc (hwloop_optimize): Likewise.\n\t* config/cris/cris.cc (cris_emit_trap_for_misalignment):\n\tLikewise.\n\t* config/csky/csky.cc (csky_expand_prologue): Likewise.\n\t* config/csky/csky.md (builtin_setjmp_receiver): Likewise.\n\t* config/gcn/gcn-valu.md (fold_extract_last_<mode>): Likewise.\n\t* config/gcn/gcn.cc (gcn_expand_builtin_1): Likewise.\n\t* config/gcn/gcn.md (<expander>ti3): Likewise.\n\t* config/i386/i386-expand.cc (ix86_expand_fp_spaceship):\n\tLikewise.\n\t* config/ia64/ia64.cc (ia64_expand_atomic_op): Likewise.\n\t* config/nds32/nds32-memory-manipulation.cc\n\t(emit_setmem_byte_loop, emit_setmem_doubleword_loop,\n\tnds32_expand_cpymemsi_loop_known_size,\n\tnds32_expand_cpymemsi_loop_unknown_size,\n\tnds32_expand_setmem_loop_v3m, nds32_expand_strlen): Likewise.\n\t* config/pa/pa.cc (pa_return_addr_rtx): Likewise.\n\t* config/pa/pa.md (clear_cache): Likewise.\n\t* config/pru/pru.md (cbranchdi4): Likewise.\n\t* config/riscv/riscv-string.cc (expand_block_move,\n\texpand_rawmemchr, expand_strcmp, riscv_block_move_loop,\n\triscv_expand_block_compare_scalar, riscv_expand_strcmp_scalar,\n\triscv_expand_strlen_scalar): Likewise.\n\t* config/riscv/riscv-v.cc (expand_fold_extract_last,\n\texpand_mask_reduction): Likewise.\n\t* config/riscv/riscv.cc (riscv_allocate_and_probe_stack_loop):\n\tLikewise.\n\t* config/riscv/riscv.md (<round_pattern><ANYF:mode>2,\n\trestore_stack_nonlocal): Likewise.\n\t* config/rs6000/rs6000-builtin.cc (rs6000_expand_builtin):\n\tLikewise.\n\t* config/rs6000/rs6000-call.cc (setup_incoming_varargs):\n\tLikewise.\n\t* config/rs6000/rs6000-logue.cc (emit_split_stack_prologue,\n\trs6000_emit_load_toc_table, rs6000_emit_prologue,\n\trs6000_expand_split_stack_prologue): Likewise.\n\t* config/rs6000/rs6000-string.cc (expand_block_compare,\n\texpand_block_compare_gpr, expand_compare_loop,\n\texpand_strn_compare): Likewise.\n\t* config/rs6000/rs6000.cc (rs6000_call_darwin_1,\n\trs6000_generate_compare, rs6000_legitimize_tls_address):\n\tLikewise.\n\t* config/rs6000/rs6000.md (strlensi, floatdisf2, abs<mode>2):\n\tLikewise.\n\t* config/s390/s390.cc (s390_expand_vec_strlen,\n\ts390_expand_vec_movstr, s390_expand_int_spaceship,\n\ts390_expand_cstoreti4, s390_expand_fp_spaceship, s390_rawmemchr):\n\tLikewise.\n\t* config/stormy16/stormy16.cc (xstormy16_emit_cbranch):\n\tLikewise.\n\t* config/vax/builtins.md (ffs<mode>2,\n\tsync_lock_test_and_set<mode>, sync_lock_release<mode>):\n\tLikewise.\n\t* config/xtensa/xtensa.cc (xtensa_return_addr): Likewise.\n\t* explow.cc (anti_adjust_stack_and_probe_stack_clash): Likewise.\n\t* rtl-tests.cc (test_dumping_insns, test_uncond_jump): Likewise.",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-03T00:50:25Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/cea82e41d3db61fbd0d181d113967b83ed69070c",
+        "files": [
+          "gcc/calls.cc",
+          "gcc/config/aarch64/aarch64.cc",
+          "gcc/config/alpha/alpha.cc",
+          "gcc/config/alpha/alpha.md",
+          "gcc/config/arc/arc.cc",
+          "gcc/config/avr/avr.cc",
+          "gcc/config/avr/avr.md",
+          "gcc/config/bfin/bfin.cc",
+          "gcc/config/cris/cris.cc",
+          "gcc/config/csky/csky.cc",
+          "gcc/config/csky/csky.md",
+          "gcc/config/gcn/gcn-valu.md",
+          "gcc/config/gcn/gcn.cc",
+          "gcc/config/gcn/gcn.md",
+          "gcc/config/i386/i386-expand.cc",
+          "gcc/config/ia64/ia64.cc",
+          "gcc/config/nds32/nds32-memory-manipulation.cc",
+          "gcc/config/pa/pa.cc",
+          "gcc/config/pa/pa.md",
+          "gcc/config/pru/pru.md",
+          "gcc/config/riscv/riscv-string.cc",
+          "gcc/config/riscv/riscv-v.cc",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/riscv/riscv.md",
+          "gcc/config/rs6000/rs6000-builtin.cc",
+          "gcc/config/rs6000/rs6000-call.cc",
+          "gcc/config/rs6000/rs6000-logue.cc",
+          "gcc/config/rs6000/rs6000-string.cc",
+          "gcc/config/rs6000/rs6000.cc",
+          "gcc/config/rs6000/rs6000.md",
+          "gcc/config/s390/s390.cc",
+          "gcc/config/stormy16/stormy16.cc",
+          "gcc/config/vax/builtins.md",
+          "gcc/config/xtensa/xtensa.cc",
+          "gcc/explow.cc",
+          "gcc/rtl-tests.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv-string.cc",
+          "path:gcc/config/riscv/riscv-v.cc",
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/config/riscv/riscv.md",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "3eb0c867d9afbc08338c9ac540acced54fa2cacc",
+        "title": "[gdb/NEWS] Move item from gdb 17 to gdb 18 (part 3)",
+        "body": "Commit 52bb1ca383e (\"This commit adds support for catching syscalls on riscv\")\nadded an item in the GDB 17 section of gdb/NEWS, which belongs in the GDB 18\nsection.\n\nMove it there.\n\nApproved-By: Eli Zaretskii <eliz@gnu.org>\n\nBug: https://sourceware.org/bugzilla/show_bug.cgi?id=34918",
+        "author": "vries",
+        "timestamp": "2026-11-02T15:18:51Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/3eb0c867d9afbc08338c9ac540acced54fa2cacc",
+        "files": [
+          "gdb/NEWS"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:bug",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "d0d6b4b045bc9663b6d2ddb78a9154cce8dc19d2",
+        "title": "c++: let the target see the attributes that wait for instantiation",
+        "body": "cplus_decl_attributes splices the late attributes out before calling\ndecl_attributes, so targetm.insert_attributes never sees them on the\ntemplate.  On RISC-V this drops the psABI ABI tag when the function type\nis dependent:\n\n```c++\ntemplate <typename T> __attribute__((riscv_vls_cc(128))) void a (T) {}\n```\n\na<int> mangles as _Z1aIiEvT_ instead of _Z1aB16riscv_vls_cc_128IiEvT_.\n\nCall the hook before the splice instead.  A template declaration now goes\nthrough the hook twice.\n\ngcc/cp/ChangeLog:\n\n\t* decl2.cc (cplus_decl_attributes): Call targetm.insert_attributes\n\tbefore the late attributes are spliced out of the list.\n\ngcc/testsuite/ChangeLog:\n\n\t* g++.target/riscv/mangle-vls-cc.C: Expect the tag on a template\n\twhose type is dependent.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-02T13:24:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/d0d6b4b045bc9663b6d2ddb78a9154cce8dc19d2",
+        "files": [
+          "gcc/cp/decl2.cc",
+          "gcc/testsuite/g++.target/riscv/mangle-vls-cc.C"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "profile-abi",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:profile-abi:abi",
+          "keyword:profile-abi:psabi",
+          "path:gcc/testsuite/g++.target/riscv/mangle-vls-cc.C",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V Profile 或 ABI相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "d3726407bde51b93deef248863192b3c9e09c9ae",
+        "title": "RISC-V: Mangle the ABI tag of a standard calling convention variant",
+        "body": "The RISC-V psABI[1] says a function using a standard calling convention variant has\nto append an extra ABI tag to its mangled name, following the \"ABI tags\"\nrule of the Itanium C++ ABI.  The only variant listed so far is the\nfixed-length vector calling convention, whose tag is\nriscv_vls_cc_<ABI_VLEN>:\n\n```c\n__attribute__((riscv_vls_cc(128))) void foo();\n```\n\nnow mangles as _Z3fooB16riscv_vls_cc_128v.\n\n[1] \"Name Mangling for Standard Calling Convention Variant\" in\nhttps://github.com/riscv-non-isa/riscv-elf-psabi-doc/blob/master/riscv-elf.adoc\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv.cc (riscv_get_vls_cc_attr): Let CHECK_ONLY\n\tsuppress the diagnostic only, not the validity test.\n\t(riscv_lookup_vls_cc_attribute): New function.\n\t(riscv_vls_cc_function_abi): Use it, and take the arguments from\n\tthe attribute that was found.\n\t(riscv_abi_tag_present_p): New function.\n\t(riscv_insert_attributes): New function.\n\t(TARGET_INSERT_ATTRIBUTES): Define.\n\ngcc/testsuite/ChangeLog:\n\n\t* g++.target/riscv/mangle-vls-cc.C: New test.",
+        "author": "kito-cheng",
+        "timestamp": "2026-11-02T13:23:59Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/d3726407bde51b93deef248863192b3c9e09c9ae",
+        "files": [
+          "gcc/config/riscv/riscv.cc",
+          "gcc/testsuite/g++.target/riscv/mangle-vls-cc.C"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "profile-abi",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:profile-abi:abi",
+          "keyword:profile-abi:psabi",
+          "keyword:vector-crypto-hypervisor:vector",
+          "keyword:vector-crypto-hypervisor:vlen",
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/testsuite/g++.target/riscv/mangle-vls-cc.C",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V Profile 或 ABI相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "bb55bb62fc8a8eabb928653fc38cbe1fde3ab773",
+        "title": "RISC-V: Avoid vsetvl insertion on shared table edges [PR middle-end/126236]",
+        "body": "Late vsetvl PRE can insert a configuration on an edge from a shared\njump-table dispatch.  Such an edge cannot be split for one dispatch\nwithout also changing the other users of the table.\n\nKeep the local configuration in blocks with incoming shared-table edges,\nusing the existing invalid_opt_bb_p check.\n\nRISC-V shares jump tables, and without this patch the new test fails with\nan ICE in rtl_split_edge.  With it, the test passes at VLEN 128 and 256.\nThe test also checks that its dispatches share their tables.\n\ngcc/ChangeLog:\n\n\tPR middle-end/126236\n\t* config/riscv/riscv-vsetvl.cc (invalid_opt_bb_p): Keep local\n\tconfigurations in blocks with incoming shared-table edges.\n\ngcc/testsuite/ChangeLog:\n\n\tPR middle-end/126236\n\t* gcc.target/riscv/rvv/vsetvl/pr126236.c: New test.\n\nSigned-off-by: Kyrylo Tkachov <ktkachov@nvidia.com>",
+        "author": "ktkachov",
+        "timestamp": "2026-11-02T10:08:33Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/bb55bb62fc8a8eabb928653fc38cbe1fde3ab773",
+        "files": [
+          "gcc/config/riscv/riscv-vsetvl.cc",
+          "gcc/testsuite/gcc.target/riscv/rvv/vsetvl/pr126236.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "vector-crypto-hypervisor",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:vector-crypto-hypervisor:vlen",
+          "path:gcc/config/riscv/riscv-vsetvl.cc",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/vsetvl/pr126236.c",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 向量、密码学或虚拟化相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "RTEMS/sourceware-mirror-binutils-gdb",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "a73130077e78606049fbc92b6be190e29ea956ce",
+        "title": "[gdb/testsuite] Handle updated quoting style in some test-cases",
+        "body": "Recent commit b32f06001cf (\"Change `...'-style quoting in gdb\") updated the\nquoting style in some messages.\n\nUpdate some test-cases to handle this.\n\nBug: https://sourceware.org/bugzilla/show_bug.cgi?id=34965",
+        "author": "vries",
+        "timestamp": "2026-11-06T12:56:36Z",
+        "url": "https://github.com/RTEMS/sourceware-mirror-binutils-gdb/commit/a73130077e78606049fbc92b6be190e29ea956ce",
+        "files": [
+          "gdb/testsuite/gdb.arch/riscv-reg-aliases.exp",
+          "gdb/testsuite/gdb.arch/riscv-tdesc-regs.exp",
+          "gdb/testsuite/gdb.arch/s390-multiarch.exp",
+          "gdb/testsuite/gdb.base/corefile-buildid.exp",
+          "gdb/testsuite/gdb.base/corefile-exec-context.exp",
+          "gdb/testsuite/gdb.base/corefile-find-exec.exp",
+          "gdb/testsuite/gdb.base/corefile-no-threads.exp",
+          "gdb/testsuite/gdb.base/corefile.exp",
+          "gdb/testsuite/gdb.threads/thread-leader-exited.exp"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "low-value:testsuite",
+          "path:gdb/testsuite/gdb.arch/riscv-reg-aliases.exp",
+          "path:gdb/testsuite/gdb.arch/riscv-tdesc-regs.exp",
+          "test-only"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "66c66fe317b9e5ba0fea75ee9220be2a0eacc1d1",
+        "title": "testsuite: Fix tail-call checks in _BitInt tests [PR127848]",
+        "body": "The tests check for a tail call to qux, but qux calls baz. Update the\nchecks for Arm, RISC-V and s390 to look for baz instead.\n\ngcc/testsuite/ChangeLog:\n\n\tPR middle-end/127848\n\t* gcc.dg/pr127848-4.c: Check for a tail call to baz instead of qux.\n\t* gcc.dg/pr127848-5.c: Likewise.\n\nSigned-off-by: Torbjörn SVENSSON <torbjorn.svensson@foss.st.com>",
+        "author": "Torbjorn-Svensson",
+        "timestamp": "2026-11-06T10:13:02Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/66c66fe317b9e5ba0fea75ee9220be2a0eacc1d1",
+        "files": [
+          "gcc/testsuite/gcc.dg/pr127848-4.c",
+          "gcc/testsuite/gcc.dg/pr127848-5.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:tests",
+          "low-value:testsuite",
+          "test-only",
+          "token:risc-v"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "04f042f50ed44c7360c840949f71fb805fc982b8",
+        "title": "RISC-V: Add more test cases for vfwred[ou]sum.vs",
+        "body": "For vs1 not overlap the vs2 register group asm check when the vs1\ncomes from the vs2 register group.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/base/pr112431-63.c: New test.\n\t* gcc.target/riscv/rvv/base/pr112431-64.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-04T06:15:40Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/04f042f50ed44c7360c840949f71fb805fc982b8",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-63.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-64.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-63.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-64.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "4710c505b10c7f6faac3c6315c307b8db10169e8",
+        "title": "RISC-V: Add test cases for vfwredosum.vs reg overlap",
+        "body": "Add test cases to ensure the vs1 of the vfwredosum.vs doesn't overlap\nthe register group of the vs2.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m8.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m8.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-04T06:15:40Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/4710c505b10c7f6faac3c6315c307b8db10169e8",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m8.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m8.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f16-m8.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredosum_vs-f32-m8.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "fb1abdf96ba0fb9fe0656fbad5805083b74c49f9",
+        "title": "RISC-V: Add test cases for vfwredusum.vs reg overlap",
+        "body": "Add test cases to ensure the vs1 of the vfwredusum.vs doesn't overlap\nthe register group of the vs2.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m8.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m8.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-04T06:15:40Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/fb1abdf96ba0fb9fe0656fbad5805083b74c49f9",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m8.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m8.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f16-m8.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vfwredusum_vs-f32-m8.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    }
+  ]
+}
