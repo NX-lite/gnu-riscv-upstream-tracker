@@ -1,0 +1,737 @@
+{
+  "schema_version": 1,
+  "window": {
+    "since": "2026-11-08T07:43:14Z",
+    "until": "2026-11-16T07:43:50Z"
+  },
+  "generated_at": "2026-11-16T07:43:50Z",
+  "repositories": [
+    {
+      "repo": "RTEMS/sourceware-mirror-binutils-gdb",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-11-08T07:43:14Z",
+      "until": "2026-11-16T07:43:50Z",
+      "collected": 109,
+      "new": 104
+    },
+    {
+      "repo": "gcc-mirror/gcc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-11-08T07:43:14Z",
+      "until": "2026-11-16T07:43:50Z",
+      "collected": 279,
+      "new": 262
+    },
+    {
+      "repo": "sailfishos-mirror/glibc",
+      "branch": "master",
+      "status": "ok",
+      "since": "2026-11-08T07:43:14Z",
+      "until": "2026-11-16T07:43:50Z",
+      "collected": 17,
+      "new": 17
+    }
+  ],
+  "counts": {
+    "total": 14,
+    "high": 2,
+    "medium": 8,
+    "low": 4,
+    "packaging_candidates": 8,
+    "llm": 0,
+    "rules_only": 14
+  },
+  "warnings": [
+    "RTEMS/sourceware-mirror-binutils-gdb：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "gcc-mirror/gcc：轻量标签没有独立时间，只能用所指提交的时间代替。",
+    "分页在第 1 页停止，元数据覆盖不完整。",
+    "未配置 LLM_API_KEY，使用规则结果。"
+  ],
+  "items": [
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "8c43a22e05a93b9c131632f8f9b7199cfa4c8f87",
+        "title": "Use tighter insn types for variables that already hold insns",
+        "body": "gcc/ChangeLog:\n\n\t* cfgexpand.cc (expand_gimple_tailcall): Use rtx_code_label * for\n\tcopied labels.\n\t* config/arm/arm.cc (arm_output_function_epilogue,\n\tthumb1_final_prescan_insn, thumb_call_via_reg, arm_file_end): Use\n\trtx_insn * or rtx_code_label * for call-via labels.\n\t* config/arm/arm.h (machine_function, CC_STATUS_INIT): Use\n\trtx_code_label * for call_via, rtx_insn * for thumb1_cc_insn, and\n\tnullptr to clear it.\n\t* config/arm/thumb2.md (doloop_end): Use rtx_insn * for the\n\tdecrement.\n\t* config/bfin/bfin.cc (hwloop_optimize, hwloop_fail): Use\n\trtx_code_label * for end_label and rtx_jump_insn * for the\n\tfailure jump.\n\t* config/c6x/c6x.cc (hwloop_fail): Use rtx_jump_insn * for the\n\tfailure jump.\n\t* config/i386/x86-tune-sched-bd.cc (sched_insn_info_s): Use\n\trtx_insn * for the window insn.\n\t* config/m68k/m68k.cc (_sched_ib): Use rtx_insn * for the\n\treservation insn.\n\t* config/mcore/mcore.cc (pool_node): Use rtx_insn * for the pool\n\tlabel.\n\t* config/pa/pa.cc (deferred_plabel): Use rtx_code_label * for the\n\tinternal label.\n\t* config/riscv/riscv.cc (riscv_expand_prologue): Use rtx_insn *\n\tfor the prologue insn.\n\t* config/rs6000/rs6000-logue.cc (rs6000_emit_load_toc_table): Use\n\trtx_code_label * for the local label.\n\t* hw-doloop.h (hwloop_info_d): Use rtx_code_label * for end_label.\n\t* reorg.cc (redundant_insn): Use rtx_insn * for target_main.\n\t* stmt.cc (emit_case_dispatch_table): Use rtx_code_label * for\n\tdefault_label.\n\nSigned-off-by: Trevor Saunders <tbsaunde@tbsaunde.org>",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-12T20:37:43Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/8c43a22e05a93b9c131632f8f9b7199cfa4c8f87",
+        "files": [
+          "gcc/cfgexpand.cc",
+          "gcc/config/arm/arm.cc",
+          "gcc/config/arm/arm.h",
+          "gcc/config/arm/thumb2.md",
+          "gcc/config/bfin/bfin.cc",
+          "gcc/config/c6x/c6x.cc",
+          "gcc/config/i386/x86-tune-sched-bd.cc",
+          "gcc/config/m68k/m68k.cc",
+          "gcc/config/mcore/mcore.cc",
+          "gcc/config/pa/pa.cc",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/rs6000/rs6000-logue.cc",
+          "gcc/hw-doloop.h",
+          "gcc/reorg.cc",
+          "gcc/stmt.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:optimize",
+          "keyword:hardware:tune",
+          "path:gcc/config/riscv/riscv.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "917da9c6e019407c9d469455ad4c50c062470d6c",
+        "title": "RISC-V: Add pipeline description for MIPS i8500 processor",
+        "body": "This patch introduces the pipeline description for the MIPS i8500\nprocessor to the RISC-V GCC backend. The i8500 has a 9-stage triple issue\nin-order execution pipeline.\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-cores.def (RISCV_TUNE): Add mips-i8500.\n\t* config/riscv/riscv-opts.h (enum riscv_microarchitecture_type):\n\tAdd mips_i8500.\n\t* config/riscv/riscv.cc (riscv_tune_param):\n\tAdd mips_i8500_tune_info.\n\t* config/riscv/riscv.md: Add mips_i8500.\n\t* doc/riscv-mtune.texi: Document mips-i8500.\n\t* config/riscv/mips-i8500.md: New file.",
+        "author": "mgoudar",
+        "timestamp": "2026-11-10T15:11:40Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/917da9c6e019407c9d469455ad4c50c062470d6c",
+        "files": [
+          "gcc/config/riscv/mips-i8500.md",
+          "gcc/config/riscv/riscv-cores.def",
+          "gcc/config/riscv/riscv-opts.h",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/riscv/riscv.md",
+          "gcc/doc/riscv-mtune.texi"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "hardware",
+        "importance": "high",
+        "matched_rules": [
+          "functional:add",
+          "keyword:hardware:microarchitecture",
+          "keyword:hardware:processor",
+          "keyword:hardware:tune",
+          "path:gcc/config/riscv/mips-i8500.md",
+          "path:gcc/config/riscv/riscv-cores.def",
+          "path:gcc/config/riscv/riscv-opts.h",
+          "path:gcc/config/riscv/riscv.cc",
+          "path:gcc/config/riscv/riscv.md",
+          "path:gcc/doc/riscv-mtune.texi",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 硬件支持相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为高；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "sailfishos-mirror/glibc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "6dc664245b7063f97626896dfbb4efe1e8d5146c",
+        "title": "Regenerate configure with autoconf 2.73",
+        "body": "This fixes a bug when compiling glibc with GCC 16, which defaults\nto C++20: The old C++11 compatibility test was failing, so glibc\nsupplied -std=gnu++11 when building C++ tests, downgrading the\nlanguage level to C++11.  GCC 15 still used the default C++17 for\nbuilding tests.\n\nBuilt with build-many-glibcs.py.  No regressions, and no changes\nin the binaries that were built.\n\nReviewed-by: Paul Eggert <eggert@cs.ucla.edu>",
+        "author": "fweimer-rh",
+        "timestamp": "2026-11-14T15:05:39Z",
+        "url": "https://github.com/sailfishos-mirror/glibc/commit/6dc664245b7063f97626896dfbb4efe1e8d5146c",
+        "files": [
+          "INSTALL",
+          "aclocal.m4",
+          "configure",
+          "manual/install.texi",
+          "sysdeps/aarch64/configure",
+          "sysdeps/alpha/configure",
+          "sysdeps/arc/configure",
+          "sysdeps/arm/configure",
+          "sysdeps/arm/preconfigure",
+          "sysdeps/csky/configure",
+          "sysdeps/csky/preconfigure",
+          "sysdeps/hppa/configure",
+          "sysdeps/htl/configure",
+          "sysdeps/i386/configure",
+          "sysdeps/ieee754/ldbl-opt/configure",
+          "sysdeps/loongarch/configure",
+          "sysdeps/loongarch/preconfigure",
+          "sysdeps/m68k/configure",
+          "sysdeps/mach/configure",
+          "sysdeps/mach/hurd/configure",
+          "sysdeps/microblaze/configure",
+          "sysdeps/microblaze/preconfigure",
+          "sysdeps/mips/configure",
+          "sysdeps/nptl/configure",
+          "sysdeps/powerpc/powerpc32/configure",
+          "sysdeps/powerpc/powerpc32/fpu/configure",
+          "sysdeps/powerpc/powerpc64/configure",
+          "sysdeps/powerpc/powerpc64/le/configure",
+          "sysdeps/powerpc/powerpc64/le/fpu/multiarch/configure",
+          "sysdeps/riscv/configure",
+          "sysdeps/riscv/preconfigure",
+          "sysdeps/s390/configure",
+          "sysdeps/sh/preconfigure",
+          "sysdeps/sparc/sparc32/configure",
+          "sysdeps/unix/sysv/linux/configure",
+          "sysdeps/unix/sysv/linux/loongarch/configure",
+          "sysdeps/unix/sysv/linux/mips/configure",
+          "sysdeps/unix/sysv/linux/powerpc/configure",
+          "sysdeps/unix/sysv/linux/powerpc/powerpc64/configure",
+          "sysdeps/unix/sysv/linux/riscv/configure",
+          "sysdeps/x86/configure",
+          "sysdeps/x86_64/configure",
+          "sysdeps/x86_64/preconfigure"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:bug",
+          "keyword:bugfix:fixes",
+          "path:sysdeps/riscv/configure",
+          "path:sysdeps/riscv/preconfigure",
+          "path:sysdeps/unix/sysv/linux/riscv/configure"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "9ef00f3c4784e2e4fb10eaa720dbde3afbb5baf4",
+        "title": "simplify-rtx: Reverse rotations with masked negative counts",
+        "body": "Reverse rotations with masked negative counts in the generic RTL\nsimplifier. Keep the count mask so the reversed count stays in range.\n\ngcc/ChangeLog:\n\n\t* simplify-rtx.cc (simplify_context::simplify_binary_operation_1):\n\tReverse rotations with masked negative counts.\n\t(selftest::test_masked_negative_rotate): New function.\n\t(selftest::test_scalar_int_ops): Call it.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/zbb-rol-ror-10.c: New test.\n\t* gcc.target/aarch64/rotate-neg-mask.c: Ditto.",
+        "author": "pz9115",
+        "timestamp": "2026-11-14T05:54:32Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/9ef00f3c4784e2e4fb10eaa720dbde3afbb5baf4",
+        "files": [
+          "gcc/simplify-rtx.cc",
+          "gcc/testsuite/gcc.target/aarch64/rotate-neg-mask.c",
+          "gcc/testsuite/gcc.target/riscv/zbb-rol-ror-10.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "isa-extension",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:isa-extension:zbb",
+          "path:gcc/testsuite/gcc.target/riscv/zbb-rol-ror-10.c",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V ISA 扩展相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "72288e39290eb70bffbe5e47beb9da6426d53a41",
+        "title": "RISC-V: Fold masked counts in inverted bit extraction",
+        "body": "Fold redundant count masks in inverted bit extraction using define_split.\n\nAcross the baseline and Zbs-only builds, C/C++ selftests and RV32/RV64\nQEMU checks passed: 48 correctness runs and 8 benchmark binaries.\nPerformance was measured in 16 gem5 Minor/O3 runs.\n\nFor the RV64 microkernel, gem5 instruction counts decreased 11.11%;\ncycles decreased 9.99% on Minor and 14.27% on O3. K1 reductions were\n11.12% in instructions and 14.31% in cycles, from 15 paired measurements.\n\nChanges in v2:\n\nUse define_split, as suggested by Jeff.\n\ngcc/ChangeLog:\n\n\t* config/riscv/bitmanip.md: Add a splitter for masked inverted\n\tbit extraction.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/zbs-bext-3.c: New test.",
+        "author": "pz9115",
+        "timestamp": "2026-11-13T05:01:28Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/72288e39290eb70bffbe5e47beb9da6426d53a41",
+        "files": [
+          "gcc/config/riscv/bitmanip.md",
+          "gcc/testsuite/gcc.target/riscv/zbs-bext-3.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:correctness",
+          "path:gcc/config/riscv/bitmanip.md",
+          "path:gcc/testsuite/gcc.target/riscv/zbs-bext-3.c",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "186151547abd8ec0a8d16c5e51813353096f71cb",
+        "title": "Use dyn_cast for insn class checks",
+        "body": "gcc/ChangeLog:\n\n\t* caller-save.cc (setup_save_areas, save_call_clobbered_regs,\n\tinsert_one_insn): Use dyn_cast instead of a class predicate.\n\t* calls.cc (fixup_tail_calls): Likewise.\n\t* cfgbuild.cc (make_edges, find_bb_boundaries): Likewise.\n\t* cfgcleanup.cc (old_insns_match_p): Likewise.\n\t* cfgrtl.cc (purge_dead_edges, need_fake_edge_p): Likewise.\n\t* combine.cc (try_combine, record_dead_and_set_regs): Likewise.\n\t* config/aarch64/aarch64.cc (aarch64_components_for_bb): Likewise.\n\t* config/arm/aarch-bti-insert.cc (rest_of_insert_bti): Likewise.\n\t* config/avr/avr.cc (_reg_unused_after): Likewise.\n\t* config/c6x/c6x.cc (returning_call_p, split_delayed_branch): Likewise.\n\t* config/i386/i386-features.cc\n\t(rest_of_insert_endbr_and_patchable_area): Likewise.\n\t* config/i386/i386.cc (ix86_avx_u128_mode_needed,\n\tix86_avx_u128_mode_after, ix86_min_insn_size, ix86_components_for_bb):\n\tLikewise.\n\t* config/loongarch/loongarch.cc (loongarch_components_for_bb): Likewise.\n\t* config/pa/pa.cc (legitimize_pic_address): Likewise.\n\t* config/riscv/riscv-sr.cc (riscv_remove_unneeded_save_restore_calls):\n\tLikewise.\n\t* config/riscv/riscv.cc (riscv_components_for_bb): Likewise.\n\t* config/rs6000/rs6000-logue.cc (compute_save_world_info,\n\trs6000_ra_ever_killed): Likewise.\n\t* config/sh/sh.cc (find_barrier, gen_block_redirect): Likewise.\n\t* config/sparc/sparc.cc (sparc_asm_function_epilogue): Likewise.\n\t* cse.cc (canonicalize_insn, cse_insn, count_reg_usage): Likewise.\n\t* cselib.cc (cselib_process_insn): Likewise.\n\t* dce.cc (deletable_insn_p, mark_insn): Use dyn_cast instead of CALL_P\n\tand drop a redundant as_a.\n\t* df-problems.cc (can_move_insns_across): Use dyn_cast instead of a\n\tclass predicate.\n\t* dse.cc (scan_insn): Likewise.\n\t* dwarf2cfi.cc (create_trace_edges): Likewise.\n\t* dwarf2out.cc (dwarf2out_var_location): Likewise.\n\t* early-remat.cc (early_remat::process_block): Likewise.\n\t* emit-rtl.cc (unshare_all_rtl_again, reset_insn_used_flags,\n\tverify_insn_sharing, unshare_all_rtl_in_chain, try_split): Likewise.\n\t* except.cc (set_nothrow_function_flags): Likewise.\n\t* ext-dce.cc (ext_dce_process_bb): Likewise.\n\t* final.cc (output_asm_label, leaf_function_p,\n\tcollect_fn_hard_reg_usage): Likewise.\n\t* function.cc (instantiate_virtual_regs,\n\tthread_prologue_and_epilogue_insns): Likewise.\n\t* gcse.cc (compute_hash_table_work): Likewise.\n\t* ira-lives.cc (process_bb_node_lives): Likewise.\n\t* ira.cc (validate_equiv_mem, memref_used_between_p,\n\tupdate_equiv_regs_prescan): Likewise.\n\t* loop-invariant.cc (find_exits, find_invariants_bb): Likewise.\n\t* loop-iv.cc (simplify_using_initial_values): Likewise.\n\t* lra-constraints.cc (inherit_in_ebb): Likewise.\n\t* lra-lives.cc (process_bb_lives): Likewise.\n\t* lra-remat.cc (set_bb_regs, calculate_gen_cands, do_remat): Likewise.\n\t* lra-spills.cc (spill_pseudos): Likewise.\n\t* lra.cc (lra_set_insn_recog_data, lra_update_insn_regno_info):\n\tLikewise.\n\t* postreload-gcse.cc (record_opr_changes): Likewise.\n\t* postreload.cc (reload_combine, reload_cse_move2add_invalidate):\n\tLikewise.\n\t* print-rtl.cc (rtx_writer::print_rtx_operand_code_u): Likewise.\n\t* reg-stack.cc (subst_stack_regs): Likewise.\n\t* regcprop.cc (copyprop_hardreg_forward_1): Likewise.\n\t* regrename.cc (build_def_use): Likewise.\n\t* reload.cc (find_equiv_reg): Likewise.\n\t* reload1.cc (reload, reload_as_needed, delete_output_reload): Likewise.\n\t* reorg.cc (delete_prior_computation): Likewise.\n\t* resource.cc (mark_target_live_regs): Likewise.\n\t* rtlanal.cc (reg_set_p, find_all_hard_reg_sets, note_stores,\n\trtx_properties::try_to_add_insn, find_reg_fusage, find_regno_fusage,\n\treplace_label): Likewise.\n\t* sched-deps.cc (sched_analyze_insn, deps_analyze_insn): Likewise.\n\t* sel-sched.cc (fur_orig_expr_found, fur_orig_expr_not_found): Likewise.\n\t* store-motion.cc (store_killed_in_insn): Likewise.\n\t* var-tracking.cc (vt_initialize): Likewise.\n\nSigned-off-by: Trevor Saunders <tbsaunde@tbsaunde.org>",
+        "author": "tbsaunde",
+        "timestamp": "2026-11-12T20:37:43Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/186151547abd8ec0a8d16c5e51813353096f71cb",
+        "files": [
+          "gcc/caller-save.cc",
+          "gcc/calls.cc",
+          "gcc/cfgbuild.cc",
+          "gcc/cfgcleanup.cc",
+          "gcc/cfgrtl.cc",
+          "gcc/combine.cc",
+          "gcc/config/aarch64/aarch64.cc",
+          "gcc/config/arm/aarch-bti-insert.cc",
+          "gcc/config/avr/avr.cc",
+          "gcc/config/c6x/c6x.cc",
+          "gcc/config/i386/i386-features.cc",
+          "gcc/config/i386/i386.cc",
+          "gcc/config/loongarch/loongarch.cc",
+          "gcc/config/pa/pa.cc",
+          "gcc/config/riscv/riscv-sr.cc",
+          "gcc/config/riscv/riscv.cc",
+          "gcc/config/rs6000/rs6000-logue.cc",
+          "gcc/config/sh/sh.cc",
+          "gcc/config/sparc/sparc.cc",
+          "gcc/cse.cc",
+          "gcc/cselib.cc",
+          "gcc/dce.cc",
+          "gcc/df-problems.cc",
+          "gcc/dse.cc",
+          "gcc/dwarf2cfi.cc",
+          "gcc/dwarf2out.cc",
+          "gcc/early-remat.cc",
+          "gcc/emit-rtl.cc",
+          "gcc/except.cc",
+          "gcc/ext-dce.cc",
+          "gcc/final.cc",
+          "gcc/function.cc",
+          "gcc/gcse.cc",
+          "gcc/ira-lives.cc",
+          "gcc/ira.cc",
+          "gcc/loop-invariant.cc",
+          "gcc/loop-iv.cc",
+          "gcc/lra-constraints.cc",
+          "gcc/lra-lives.cc",
+          "gcc/lra-remat.cc",
+          "gcc/lra-spills.cc",
+          "gcc/lra.cc",
+          "gcc/postreload-gcse.cc",
+          "gcc/postreload.cc",
+          "gcc/print-rtl.cc",
+          "gcc/reg-stack.cc",
+          "gcc/regcprop.cc",
+          "gcc/regrename.cc",
+          "gcc/reload.cc",
+          "gcc/reload1.cc",
+          "gcc/reorg.cc",
+          "gcc/resource.cc",
+          "gcc/rtlanal.cc",
+          "gcc/sched-deps.cc",
+          "gcc/sel-sched.cc",
+          "gcc/store-motion.cc",
+          "gcc/var-tracking.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv-sr.cc",
+          "path:gcc/config/riscv/riscv.cc",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "fada0de3559a530fa643a5de5fcee4f328699c0a",
+        "title": "tree: Avoid building a zero tree for poly_int coefficients",
+        "body": "On targets with NUM_POLY_INT_COEFFS > 1 (AArch64, RISC-V), converting an\nINTEGER_CST to a poly_offset_int or poly_widest_int, as wi::to_poly_offset\nand wi::to_poly_widest do, fills the trailing coefficients using\nwi::ints_for<...>::zero.  For the tree-backed extended_tree types this\ncalled build_zero_cst, which looks up the INTEGER_CST cache on every\nconversion.\n\nThese conversions are frequent.  For example get_ref_base_and_extent\ndoes them for every COMPONENT_REF, ARRAY_REF and MEM_REF it decomposes,\nso the alias oracle pays for it on each statement visited by the alias\nwalkers.  In an AArch64 -O3 profile of a C++ file, wide_int_to_tree was\nabout 1% of the compiler's instructions as self cost, mostly reached\nfrom get_ref_base_and_extent via refs_may_alias_p_2.\n\nextended_tree has a fixed precision independent of the type of the tree,\nso any zero INTEGER_CST represents the coefficient.  Return\ninteger_zero_node instead.  The unextended_tree variant takes its\nprecision from the type and is unchanged.\n\nThe test input is the C++ test suite of fmtlib/fmt\n(https://github.com/fmtlib/fmt),\nbuilt with CMake in Release mode (-O3 -DNDEBUG -std=gnu++11).\n\ninstructions drop printf-test.cc -2.8%, format-test.cc\n-1.5%, all 8 translation units combined -1.9%.\n\nBootstrapped and tested on aarch64-none-linux-gnu.\n\ngcc/ChangeLog:\n\n\t* tree.h (wi::ints_for<generic_wide_int<extended_tree<N>>,\n\tINL_CONST_PRECISION>::zero): Return integer_zero_node.\n\t(wi::ints_for<generic_wide_int<extended_tree<N>>,\n\tCONST_PRECISION>::zero): Likewise.\n\nSigned-off-by: Kyrylo Tkachov <ktkachov@nvidia.com>",
+        "author": "ktkachov",
+        "timestamp": "2026-11-12T15:02:39Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/fada0de3559a530fa643a5de5fcee4f328699c0a",
+        "files": [
+          "gcc/tree.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "profile-abi",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:profile-abi:profile",
+          "token:risc-v"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V Profile 或 ABI相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "56ea963549ef4eeba0d6d3fe01ef5ad9a62e334e",
+        "title": "RISC-V: Return the matched macro-fusion operation",
+        "body": "Ready-list scheduling must probe potential pairs without emitting dump\nrecords.  Add a helper that returns the matched fusion operation and keep\ndumping in TARGET_SCHED_MACRO_FUSION_PAIR_P.\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-fusion.cc (riscv_fusion_type_name): New\n\tfunction.\n\t(riscv_get_fusion_pair_type): Likewise.\n\t(riscv_macro_fusion_pair_p): Use riscv_get_fusion_pair_type and\n\temit the matched operation.\n\t* config/riscv/riscv-protos.h (riscv_get_fusion_pair_type):\n\tDeclare.\n\nSigned-off-by: Jin Ma <jinma@linux.alibaba.com>",
+        "author": "majin2020",
+        "timestamp": "2026-11-12T07:18:50Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/56ea963549ef4eeba0d6d3fe01ef5ad9a62e334e",
+        "files": [
+          "gcc/config/riscv/riscv-fusion.cc",
+          "gcc/config/riscv/riscv-protos.h"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "medium",
+        "matched_rules": [
+          "path:gcc/config/riscv/riscv-fusion.cc",
+          "path:gcc/config/riscv/riscv-protos.h",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "2e046596d270a5c61b8a02e18e69211a04453d16",
+        "title": "RISC-V: Fix reg overlap for vs1 of vwadd[u].wv",
+        "body": "The vs2 of the vwadd[u].wv is read with EEW = 2 * SEW while the vs1\nis read with EEW = SEW.  The section 5.2 of the vector spec reserves\nany encoding in which one vector register supplies source operands\nwith two or more different EEWs.  Thus, the vs1 must not fall inside\nthe vs2 register group, but we may have below asm dump when the vs1\ncomes from the vs2 register group.\n\n  vwadd.wv v4,v4,v6\n\nLike the vfwadd.wv, take the Wn4 constraint for the operand 3 (aka vs2)\nof the vwadd[u].wv.  See below issue of the riscv-isa-manual for more\ndetails.\n\n  https://github.com/riscv/riscv-isa-manual/issues/2350\n\ngcc/ChangeLog:\n\n\t* config/riscv/vector.md: Take the Wn4 constraint for the\n\toperand 3 of the vwadd[u].wv.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-11T01:58:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/2e046596d270a5c61b8a02e18e69211a04453d16",
+        "files": [
+          "gcc/config/riscv/vector.md"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/vector.md",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "6cecf3235b239bb854e6f90e515196c2a0785cd3",
+        "title": "RISC-V: Fix memory leak in permconst pass",
+        "body": "This patch fixes a memory leak in vector_permconst pass.  The memory\nleak was found during an LLM review of the codebase.\n\nRegtested on rv64gcv and rv32gcv.\n\nAssisted-by: Codex\n\ngcc/ChangeLog:\n\n\t* config/riscv/riscv-vect-permconst.cc (struct const_vector_hasher):\n\tDerive from free_ptr_hash.\n\t(vector_permconst::process_bb): Change vector_permconst_table to\n\tautomatic variable.",
+        "author": "garthlei",
+        "timestamp": "2026-11-10T01:43:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/6cecf3235b239bb854e6f90e515196c2a0785cd3",
+        "files": [
+          "gcc/config/riscv/riscv-vect-permconst.cc"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "bugfix",
+        "importance": "medium",
+        "matched_rules": [
+          "keyword:bugfix:fix",
+          "keyword:vector-crypto-hypervisor:vector",
+          "path:gcc/config/riscv/riscv-vect-permconst.cc",
+          "token:risc-v",
+          "token:riscv",
+          "token:rv32",
+          "token:rv64"
+        ],
+        "packaging_candidate": true
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 问题修复相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为中；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "建议人工核对上游状态和适用版本，并完成构建及回归测试后再决定打包。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "759916c4bd250d5a96320e06cdafa5a16e9ea38f",
+        "title": "RISC-V: Add test cases for vwadd.wv vs1 reg overlap",
+        "body": "Add test cases to ensure the vs1 of the vwadd.wv doesn't overlap\nthe register group of the vs2.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/group_overlap.h\n\t(LOOP_WIDEN_BINARY_WV_BODY_OVERLAP_X2): New macro for the vs1\n\tcomes from the vs2 register group.\n\t(DEF_GROUP_OVERLAP_BINARY_4): New macro.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf8.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-mf2.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-11T01:58:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/759916c4bd250d5a96320e06cdafa5a16e9ea38f",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/group_overlap.h",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf8.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/group_overlap.h",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i16-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i32-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv_vs1-i8-mf8.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "81584f5a499f20283f151c66679b93f7cabea40d",
+        "title": "RISC-V: Add test cases for vwaddu.wv vs1 reg overlap",
+        "body": "Add test cases to ensure the vs1 of the vwaddu.wv doesn't overlap\nthe register group of the vs2.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf8.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-mf2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-mf4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m1.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m2.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m4.c: New test.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-mf2.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-11T01:58:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/81584f5a499f20283f151c66679b93f7cabea40d",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m1.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf2.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf8.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u16-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u32-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m1.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf2.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv_vs1-u8-mf8.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "a2a11abfad353f3e39c3a46abf278ad6258e5547",
+        "title": "RISC-V: Add more test cases for vwadd[u].wv",
+        "body": "For vs1 not overlap the vs2 register group asm check when the vs1\ncomes from the vs2 register group.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/base/pr112431-65.c: New test.\n\t* gcc.target/riscv/rvv/base/pr112431-66.c: New test.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-11T01:58:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/a2a11abfad353f3e39c3a46abf278ad6258e5547",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-65.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-66.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-65.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/base/pr112431-66.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    },
+    {
+      "update": {
+        "repository": "gcc-mirror/gcc",
+        "kind": "commit",
+        "status": "merged",
+        "sha": "ac96a764cc995f35362a49250fd31b7caafbce39",
+        "title": "RISC-V: Adjust vwadd[u].wv m4 test cases for reg overlap",
+        "body": "After the Wn4 constraint is taken for the operand 3 (aka vs2) of the\nvwadd[u].wv, the register allocation of the m4 test cases changes\nunder high register pressure.  The vs1 still overlaps the highest part\nof the vd and doesn't overlap the vs2 register group, which is the same\nas the vfwadd.wv.\n\n  vwadd.wv v16,v0,v20\n\nThus, adjust the asm check of these test cases.\n\ngcc/testsuite/ChangeLog:\n\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i8-m4.c: Adjust\n\tasm check.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i16-m4.c: Ditto.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i32-m4.c: Ditto.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u8-m4.c: Ditto.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u16-m4.c: Ditto.\n\t* gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u32-m4.c: Ditto.\n\nSigned-off-by: Pan Li <pan2.li@intel.com>",
+        "author": "Incarnation-p-lee",
+        "timestamp": "2026-11-11T01:58:00Z",
+        "url": "https://github.com/gcc-mirror/gcc/commit/ac96a764cc995f35362a49250fd31b7caafbce39",
+        "files": [
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i8-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u16-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u32-m4.c",
+          "gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u8-m4.c"
+        ],
+        "pull_request": null
+      },
+      "rules": {
+        "category": "other",
+        "importance": "low",
+        "matched_rules": [
+          "low-value:test",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwadd_wv-i8-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u16-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u32-m4.c",
+          "path:gcc/testsuite/gcc.target/riscv/rvv/autovec/group_overlap/vwaddu_wv-u8-m4.c",
+          "test-only",
+          "token:risc-v",
+          "token:riscv"
+        ],
+        "packaging_candidate": false
+      },
+      "analysis_mode": "rules-only",
+      "summary_zh": "检测到 RISC-V 其他变更相关更新，请结合原始标题和链接核对。",
+      "impact_zh": "规则优先级为低；未验证构建、运行或发布状态。",
+      "packaging_advice_zh": "保留跟踪，暂不列为优先打包候选；需结合实际版本和测试结果人工评估。",
+      "analysis_warning": "未配置 LLM_API_KEY，使用规则结果。",
+      "llm_assessment": null
+    }
+  ]
+}
